@@ -1,0 +1,561 @@
+{
+  "name": "S3 - Organization & Management",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "s3-org",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1024,
+        112
+      ],
+      "id": "e2f1fba4-2b72-4e62-9600-190ea2eb5a0f",
+      "name": "Webhook",
+      "webhookId": "e48410dd-2e64-406e-be6f-67ed2401b40f"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"completed\",\n  \"section\": \"org_management\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1232,
+        -288
+      ],
+      "id": "7756a4f4-1f2a-42e2-8724-b09cd9140416",
+      "name": "Respond Success"
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('node');\n\nconst attempts = staticData.attempts ?? 0;\nconst newAttempts = attempts + 1;\n\nif (newAttempts >= 3) {\n    staticData.attempts = 0; // reset for next execution\n    return [{ json: { ...$json, attempts: newAttempts, is_failed: 'yes' } }];\n}\n\nstaticData.attempts = newAttempts;\nreturn [{ json: { ...$json, attempts: newAttempts, is_failed: 'no' } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        128
+      ],
+      "id": "9f62fcbb-48bc-4f97-96ea-2cf8b2083220",
+      "name": "Retry Counter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-failed",
+              "leftValue": "={{ $json.is_failed }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        816,
+        128
+      ],
+      "id": "5eee2e7b-c742-4f3d-9d4b-8e4c4e6165e6",
+      "name": "Is Failed?"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        240
+      ],
+      "id": "5c8bc725-07f7-45da-bfff-d4dcc3f41ac6",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "XzkU6tJKJbN0O4NC",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $json.output || '';\n\nconst requiredKeywords = [\n    ['Management Team', 'Équipe de direction'],\n    ['Structure', 'Structure organisationnelle'],\n    ['Governance', 'Gouvernance'],\n    ['Legal', 'Juridique'],\n];\n\nconst missingKeywords = requiredKeywords.filter(group =>\n    !group.some(kw => output.toLowerCase().includes(kw.toLowerCase()))\n);\n\nreturn [{\n    json: {\n        ...$json,\n        keywords_valid: missingKeywords.length === 0 ? 'true' : 'false',\n        missing_keywords: missingKeywords.map(g => g[0]),\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        112
+      ],
+      "id": "42cb379d-1509-42bc-9850-d550e04bed38",
+      "name": "Validate Keywords"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-valid",
+              "leftValue": "={{ $json.keywords_valid }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        112
+      ],
+      "id": "e12514fa-c2f8-42a4-ae30-bce9d2a4941a",
+      "name": "Keywords valid?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $json.output || '';\nconst minLength = 400;\nconst length_valid = output.length >= minLength ? 'true' : 'false';\n\nreturn [{\n  json: {\n    ...$json,\n    length_valid: length_valid,\n    actual_length: output.length,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        -80
+      ],
+      "id": "d58ae7e6-e30b-44d3-9e10-15342d658a34",
+      "name": "Validation Length"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "66d700f5-efc0-4520-96bf-a6c6cb27a4be",
+              "leftValue": "={{ $json.length_valid }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        304,
+        -80
+      ],
+      "id": "55ff664f-a4ae-4ad7-9239-3bb2d79692af",
+      "name": "Length valid"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6e3c984a-576e-4136-8ca8-ca06bda3157c",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        944,
+        -96
+      ],
+      "id": "d4c0577c-a7e1-4d93-a597-a804c61d8fac",
+      "name": "Is Saved ?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"failed\",\n  \"section\": \"org_management\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1232,
+        -64
+      ],
+      "id": "f6effb54-c3eb-4f69-b9d4-294b6f73b20f",
+      "name": "Saving Failed"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"failed\",\n  \"section\": \"org_management\"\n}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1088,
+        112
+      ],
+      "id": "67f20ab0-346c-4778-ac6f-e879c0e26289",
+      "name": "Generating Failed"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Équipe de direction\n- Structure organisationnelle\n- Gouvernance\n- Cadre juridique\n` : `\n- Management Team\n- Organizational Structure\n- Governance\n- Legal Framework\n`;\n\nconst prompt = `\nYou are writing a professional business plan section: Organization & Management.\nLanguage: ${language}\n\n## Company Context\n${context.company_presentation || 'Not provided'}\n\n## Market Context\n${context.market_analysis || 'Not provided'}\n\n## Organization Information\n- Management Team: ${input.management_team || 'Not provided'}\n- Governance Model: ${input.governance_model || 'Not provided'}\n- Organizational Structure: ${input.org_structure || 'Not provided'}\n- Key Departments: ${input.key_departments || 'Not provided'}\n- Advisory Board: ${input.advisory_board || 'Not provided'}\n- Legal Setup: ${input.legal_setup || 'Not provided'}\n\nWrite a detailed Organization & Management section. Include these headings: ${headings}\n\nRules:\n- Minimum 400 words\n- Write in ${language}\nCRITICAL INSTRUCTION — OUTPUT FORMAT:\nYou MUST return your response in exactly this format. Any other format is invalid.\n\n=== SECTION_TEXT ===\n[Write your full detailed section here]\n=== MEMORY_SUMMARY ===\nCEO: [value]\nCTO: [value]\nTeam Size: [value]\nStructure: [value]\nLegal Entity: [value]\nAdvisory Board: [value]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'org_management',\n    language,\n    input_json: input,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        112
+      ],
+      "id": "613744b1-d8b2-461f-83fd-bceb1e8d5db6",
+      "name": "Build Prompt"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "plan_sections",
+          "mode": "list",
+          "cachedResultName": "plan_sections"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "id",
+        "valueToMatchOn": "={{ $json.sectionId }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "generated_text",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "column": "memory_summary",
+              "value": "={{ $json.memory_summary }}"
+            },
+            {
+              "column": "tokens_input",
+              "value": "={{ $json.tokens_input }}"
+            },
+            {
+              "column": "tokens_output",
+              "value": "={{ $json.tokens_output }}"
+            },
+            {
+              "column": "tokens_total",
+              "value": "={{ $json.tokens_total }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        720,
+        -96
+      ],
+      "id": "4db63b0d-1aa6-41c4-a742-5b3e7e48bea1",
+      "name": "Update rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "OYe5cyJ7gIDEQOsQ",
+          "name": "Ventiqo MySQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $('AI Agent').item.json.output || '';\n\nlet textMatch = raw.match(/=== SECTION_TEXT ===([\\s\\S]*?)=== MEMORY_SUMMARY ===/);\nlet memMatch  = raw.match(/=== MEMORY_SUMMARY ===([\\s\\S]*?)$/);\n\nif (!textMatch) {\n  const parts = raw.split(/===\\s*MEMORY_SUMMARY\\s*===/i);\n  textMatch = parts.length > 1 ? [null, parts[0].replace(/===.*?===/i, '').trim()] : null;\n}\nif (!memMatch) {\n  const parts = raw.split(/===\\s*MEMORY_SUMMARY\\s*===/i);\n  memMatch = parts.length > 1 ? [null, parts[1].trim()] : null;\n}\n\nlet section_text   = textMatch ? textMatch[1].replace(/^===.*?===\\n?/i, '').trim() : raw.trim();\nsection_text = section_text.replace(/===\\s*[^=]*?\\s*===/g, '').trim();\nconst memory_summary = memMatch ? memMatch[1].trim() : '';\n\nconst promptText   = $('Build Prompt').item.json.prompt || '';\nconst tokens_input  = Math.round(promptText.length / 4);\nconst tokens_output = Math.round(raw.length / 4);\nconst tokens_total  = tokens_input + tokens_output;\n\nconst buildData = $('Build Prompt').item.json;\nreturn [{\n  json: {\n    ...buildData,\n    output: section_text,\n    memory_summary,\n    tokens_input,\n    tokens_output,\n    tokens_total,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        -96
+      ],
+      "id": "6337910c-27ce-4897-bf7d-93ec3b6d766d",
+      "name": "Parse Output"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {
+          "systemMessage": "You are a professional business plan writer. Always respond with well-structured, professional content.\nAlways return your response in exactly this format, with no text before or after:\n\n=== SECTION_TEXT ===\n[Your full detailed section here]\n\n=== MEMORY_SUMMARY ===\n[Compact key-value facts, max 150 words, no paragraphs]\nCEO:\nCTO:\nTeam Size:\nStructure:\nLegal Entity:\nAdvisory Board:"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -592,
+        112
+      ],
+      "id": "3a9a789b-985c-48ab-8f1d-76d024663470",
+      "name": "AI Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry Counter": {
+      "main": [
+        [
+          {
+            "node": "Is Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Failed?": {
+      "main": [
+        [
+          {
+            "node": "Generating Failed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Keywords": {
+      "main": [
+        [
+          {
+            "node": "Keywords valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keywords valid?": {
+      "main": [
+        [
+          {
+            "node": "Validation Length",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation Length": {
+      "main": [
+        [
+          {
+            "node": "Length valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Length valid": {
+      "main": [
+        [
+          {
+            "node": "Parse Output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Saved ?": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Saving Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Is Saved ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Output": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Validate Keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "4874bcc6-2c0e-425a-8d47-ea496597d938",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+  },
+  "id": "rCKIhGfCzOym5iJA",
+  "tags": []
+}

@@ -1,0 +1,565 @@
+{
+  "name": "S6 - Financial Plan",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "s6-financial",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        112
+      ],
+      "id": "b2534877-51ab-43d9-b89a-455210167848",
+      "name": "Webhook",
+      "webhookId": "9be09416-77c0-4ed5-819c-f122d35fde11"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"completed\",\n  \"section\": \"financial_plan\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1232,
+        -288
+      ],
+      "id": "32c6ccac-fe3b-48de-bbde-af310443fc21",
+      "name": "Respond Success"
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('node');\n\nconst attempts = staticData.attempts ?? 0;\nconst newAttempts = attempts + 1;\n\nif (newAttempts >= 3) {\n    staticData.attempts = 0; // reset for next execution\n    return [{ json: { ...$json, attempts: newAttempts, is_failed: 'yes' } }];\n}\n\nstaticData.attempts = newAttempts;\nreturn [{ json: { ...$json, attempts: newAttempts, is_failed: 'no' } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        128
+      ],
+      "id": "16337902-631a-4c0d-b8ad-e8887ae4c4a6",
+      "name": "Retry Counter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-failed",
+              "leftValue": "={{ $json.is_failed }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        720,
+        128
+      ],
+      "id": "4cc608d7-52ad-4955-86aa-8faad59a62c1",
+      "name": "Is Failed?"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        240
+      ],
+      "id": "4b5385be-3f6e-412a-9d27-73d9bc61941d",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "XzkU6tJKJbN0O4NC",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $json.output || '';\n\nconst requiredKeywords = [\n    ['Revenue', 'Projections de revenus', 'Revenus'],\n    ['Cost', 'Structure des coûts', 'Coûts'],\n    ['Funding', 'Financement'],\n    ['Break', 'Seuil de rentabilité'],\n];\n\nconst missingKeywords = requiredKeywords.filter(group =>\n    !group.some(kw => output.toLowerCase().includes(kw.toLowerCase()))\n);\n\nreturn [{\n    json: {\n        ...$json,\n        keywords_valid: missingKeywords.length === 0 ? 'true' : 'false',\n        missing_keywords: missingKeywords.map(g => g[0]),\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        112
+      ],
+      "id": "81a8a71a-d714-4522-baff-52bbc8fdce07",
+      "name": "Validate Keywords"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-valid",
+              "leftValue": "={{ $json.keywords_valid }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        112
+      ],
+      "id": "0c106438-ce29-4f29-81f2-f7411018d2d2",
+      "name": "Keywords valid?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $json.output || '';\nconst minLength = 400;\nconst length_valid = output.length >= minLength ? 'true' : 'false';\n\nreturn [{\n  json: {\n    ...$json,\n    length_valid: length_valid,\n    actual_length: output.length,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        -80
+      ],
+      "id": "2ff88b57-1ba3-4e8d-a7e7-ee10878bfc27",
+      "name": "Validation Length"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "66d700f5-efc0-4520-96bf-a6c6cb27a4be",
+              "leftValue": "={{ $json.length_valid }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        -80
+      ],
+      "id": "e77521db-64e7-4354-9b11-1fe2ab6b2476",
+      "name": "Length valid"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6e3c984a-576e-4136-8ca8-ca06bda3157c",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        944,
+        -96
+      ],
+      "id": "0e704895-5d8c-4a10-a833-aac8db889cfd",
+      "name": "Is Saved ?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"failed\",\n  \"section\": \"financial_plan\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1232,
+        -80
+      ],
+      "id": "c321c9e2-c4c3-4806-9d70-2ca6f9e07ac4",
+      "name": "Saving Failed"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"failed\",\n  \"section\": \"financial_plan\"\n}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        112
+      ],
+      "id": "4f4297fe-774b-4937-9402-58faa3bda2a7",
+      "name": "Generating Failed"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\nconst sectionId = body.section_id;\n\nconst headings = language === 'french' ? `\n- Projections de revenus\n- Structure des coûts\n- Besoins en financement\n- Analyse du seuil de rentabilité\n` : `\n- Revenue Projections\n- Cost Structure\n- Funding Requirements\n- Break-even Analysis\n`;\n\nconst prompt = `\nYou are a professional financial advisor writing the Financial Plan section of a business plan.\nLanguage: ${language}\n\n## Company Context\n${context.company_presentation || 'Not provided'}\n\n## Strategy Context\n${context.strategy || 'Not provided'}\n\n## Operational Context\n${context.operational_plan || 'Not provided'}\n\n## User Provided Financial Data\n- Startup Costs: ${input.startup_costs || 'Not provided'}\n- Monthly Burn Rate: ${input.monthly_burn || 'Not provided'}\n- Break-even Point: ${input.breakeven || 'Not provided'}\n- Revenue Year 1: ${input.revenue_y1 || 'Not provided'}\n- Revenue Year 2: ${input.revenue_y2 || 'Not provided'}\n- Revenue Year 3: ${input.revenue_y3 || 'Not provided'}\n- Funding Sources: ${input.funding_sources || 'Not provided'}\n- Financial Assumptions: ${input.financial_assumptions || 'Not provided'}\n\n## Your Task\n\nYou must produce TWO things in your response:\n\n### PART 1 — NARRATIVE TEXT\nWrite a detailed Financial Plan section with these headings: ${headings}\n\nUse the user's data as a base but enhance it with realistic projections.\nBase your projections on the company's industry, location, and business model described in the Company Context above.\nMake projections ambitious but achievable given the specific market, domain, and region of this business.\nMinimum 400 words. Write in ${language}.\n\n### PART 2 — STRUCTURED DATA\nAfter the narrative, add this exact block with realistic numbers derived from the narrative:\n\n---CHART_DATA_START---\n{\n  \"revenue\": [YEAR1_NUMBER, YEAR2_NUMBER, YEAR3_NUMBER],\n  \"costs\": [YEAR1_COSTS, YEAR2_COSTS, YEAR3_COSTS],\n  \"profit\": [YEAR1_PROFIT, YEAR2_PROFIT, YEAR3_PROFIT],\n  \"breakeven_month\": MONTH_NUMBER,\n  \"arpu\": MONTHLY_REVENUE_PER_USER,\n  \"monthly_growth_rate\": PERCENTAGE,\n  \"cost_breakdown_y1\": {\n    \"development\": NUMBER,\n    \"marketing\": NUMBER,\n    \"operations\": NUMBER\n  },\n  \"cost_breakdown_y2\": {\n    \"development\": NUMBER,\n    \"marketing\": NUMBER,\n    \"operations\": NUMBER\n  },\n  \"cost_breakdown_y3\": {\n    \"development\": NUMBER,\n    \"marketing\": NUMBER,\n    \"operations\": NUMBER\n  }\n}\n---CHART_DATA_END---\n---MEMORY_SUMMARY---\nStartup Costs: [value]\nMonthly Burn: [value]\nBreakeven: [value]\nRevenue Y1: [value]\nRevenue Y2: [value]\nRevenue Y3: [value]\nFunding: [value]\nCost Structure: [value]\n\nRules:\n- Numbers must be realistic and consistent with the narrative\n- All numbers must be plain integers or decimals, no currency symbols\n- The profit array = revenue minus costs for each year\n- Base all projections on the company industry, domain and region from the context above\n`;\n\nreturn [{\n    json: {\n        prompt,\n        section_id: sectionId,\n        business_plan_id: businessPlanId,\n        section_name: 'financial_plan',\n        language,\n        input_json: input,\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -912,
+        112
+      ],
+      "id": "07ef5bb2-1158-43b8-a368-c87e6e9ff943",
+      "name": "Build Prompt"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {
+          "systemMessage": "You are a professional business plan writer. Always respond with well-structured, professional content.\nAlways include a === MEMORY_SUMMARY === block at the very end of your response, after the ---CHART_DATA_END--- block."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -688,
+        112
+      ],
+      "id": "02f052de-e3bf-4e79-bc06-1366545472d5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "plan_sections",
+          "mode": "list",
+          "cachedResultName": "plan_sections"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "id",
+        "valueToMatchOn": "={{ $json.section_id }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "generated_text",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "column": "chart_data",
+              "value": "={{ $json.chart_data }}"
+            },
+            {
+              "column": "memory_summary",
+              "value": "={{ $json.memory_summary }}"
+            },
+            {
+              "column": "tokens_input",
+              "value": "={{ $json.tokens_input }}"
+            },
+            {
+              "column": "tokens_output",
+              "value": "={{ $json.tokens_output }}"
+            },
+            {
+              "column": "tokens_total",
+              "value": "={{ $json.tokens_total }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        720,
+        -96
+      ],
+      "id": "e3e57cbf-a0ce-4376-9db8-4d765a097b20",
+      "name": "Update rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "OYe5cyJ7gIDEQOsQ",
+          "name": "Ventiqo MySQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $('AI Agent').item.json.output || '';\n\n// Extract chart data\nconst chartDataMatch = raw.match(/---CHART_DATA_START---([\\s\\S]*?)---CHART_DATA_END---/);\n\nlet chartData = null;\nlet narrativeText = raw;\n\nif (chartDataMatch) {\n    try {\n        // Fix French number formatting (20 000 → 20000) and math expressions\n        const rawJson = chartDataMatch[1].trim()\n            .replace(/(\\d)\\s+(\\d)/g, '$1$2')\n            .replace(/(\\d+(?:\\+\\d+)+)/g, (match) => eval(match));\n        chartData = JSON.parse(rawJson);\n        narrativeText = raw\n            .replace(/---CHART_DATA_START---[\\s\\S]*?---CHART_DATA_END---/, '')\n            .replace(/###\\s*PART\\s*[12]\\s*[—-]\\s*[\\w\\s]+/gi, '')\n            .trim();\n    } catch (e) {\n        chartData = null;\n        console.log('chart parse error:', e.message);\n    }\n}\n\n// Match MEMORY_SUMMARY with any delimiter or even no delimiter\nlet memMatch = narrativeText.match(/(?:===|---|\\*\\*|)\\s*MEMORY_SUMMARY\\s*(?:===|---|\\*\\*|)[^\\n]*\\n([\\s\\S]*?)$/i);\nconst memory_summary = memMatch ? memMatch[1].trim() : '';\n\n// Remove everything from MEMORY_SUMMARY onwards\nlet cleanNarrative = narrativeText.replace(/(?:===|---|\\*\\*|)\\s*MEMORY_SUMMARY\\s*[\\s\\S]*$/i, '').trim();\n\n// Strip any stray === headings === from narrative\ncleanNarrative = cleanNarrative.replace(/===\\s*[^=]*?\\s*===/g, '').trim();\n\n// Strip any stray === headings === from narrative\ncleanNarrative = cleanNarrative.replace(/===\\s*[^=]*?\\s*===/g, '').trim();\n\n// Token estimation\nconst promptText    = $('Build Prompt').item.json.prompt || '';\nconst tokens_input  = Math.round(promptText.length / 4);\nconst tokens_output = Math.round(raw.length / 4);\nconst tokens_total  = tokens_input + tokens_output;\n\nconst buildData = $('Build Prompt').item.json;\nreturn [{\n    json: {\n        ...buildData,\n        output: cleanNarrative,\n        chart_data: chartData ? JSON.stringify(chartData) : null,\n        memory_summary,\n        tokens_input,\n        tokens_output,\n        tokens_total,\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        -96
+      ],
+      "id": "f0608e93-c72f-4b68-9107-632d334451c0",
+      "name": "Parse Chart Data"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry Counter": {
+      "main": [
+        [
+          {
+            "node": "Is Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Failed?": {
+      "main": [
+        [
+          {
+            "node": "Generating Failed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Keywords": {
+      "main": [
+        [
+          {
+            "node": "Keywords valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keywords valid?": {
+      "main": [
+        [
+          {
+            "node": "Validation Length",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation Length": {
+      "main": [
+        [
+          {
+            "node": "Length valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Length valid": {
+      "main": [
+        [
+          {
+            "node": "Parse Chart Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Saved ?": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Saving Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Validate Keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Is Saved ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Chart Data": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8e0d90c5-64a1-4aca-843b-e62f4a6d170b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+  },
+  "id": "KiN9IKNH194Fl0a8",
+  "tags": []
+}

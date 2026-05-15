@@ -1,0 +1,561 @@
+{
+  "name": "S2 - Market Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "s2-market",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2192,
+        480
+      ],
+      "id": "b40d05b8-ac97-43a3-9736-3df0eb275828",
+      "name": "Webhook",
+      "webhookId": "a4cdcc9d-1068-492e-a0f5-297597e5019d"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"completed\",\n  \"section\": \"market_analysis\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        80
+      ],
+      "id": "20865464-6300-4a75-909f-c927a7cc8979",
+      "name": "Respond Success"
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('node');\n\nconst attempts = staticData.attempts ?? 0;\nconst newAttempts = attempts + 1;\n\nif (newAttempts >= 3) {\n    staticData.attempts = 0; // reset for next execution\n    return [{ json: { ...$json, attempts: newAttempts, is_failed: 'yes' } }];\n}\n\nstaticData.attempts = newAttempts;\nreturn [{ json: { ...$json, attempts: newAttempts, is_failed: 'no' } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        496
+      ],
+      "id": "2163aa3b-e985-452c-b98c-fa27d7cd7e27",
+      "name": "Retry Counter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-failed",
+              "leftValue": "={{ $json.is_failed }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -336,
+        496
+      ],
+      "id": "e396d41a-34c8-4c94-8438-02778f516fb4",
+      "name": "Is Failed?"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -1744,
+        608
+      ],
+      "id": "9eefb628-a9aa-41fb-8d6d-17133813976d",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "XzkU6tJKJbN0O4NC",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $json.output || '';\n\nconst requiredKeywords = [\n    ['Target Market', 'Taille du marché', 'Marché cible'],\n    ['Segmentation', 'Segmentation du marché'],\n    ['Competitive', 'Analyse concurrentielle', 'Concurrentielle'],\n    ['PESTEL'],\n    ['SWOT'],\n];\n\nconst missingKeywords = requiredKeywords.filter(group =>\n    !group.some(kw => output.toLowerCase().includes(kw.toLowerCase()))\n);\n\nreturn [{\n    json: {\n        ...$json,\n        keywords_valid: missingKeywords.length === 0 ? 'true' : 'false',\n        missing_keywords: missingKeywords.map(g => g[0]),\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1456,
+        480
+      ],
+      "id": "ed45a9fa-25f2-426e-90b8-a178be8b00ce",
+      "name": "Validate Keywords"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-valid",
+              "leftValue": "={{ $json.keywords_valid }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1296,
+        480
+      ],
+      "id": "7dc19fb2-6442-43ca-aa3a-d8240083d133",
+      "name": "Keywords valid?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $json.output || '';\nconst minLength = 400;\nconst length_valid = output.length >= minLength ? 'true' : 'false';\n\nreturn [{\n    json: {\n        ...$json,\n        length_valid,\n        actual_length: output.length,\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1056,
+        288
+      ],
+      "id": "24f27be9-dd60-4c4a-adc6-f1b754a9986d",
+      "name": "Validation Length"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "66d700f5-efc0-4520-96bf-a6c6cb27a4be",
+              "leftValue": "={{ $json.length_valid }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -848,
+        288
+      ],
+      "id": "fedbb247-f1a4-49df-aa8c-193e4857ee2d",
+      "name": "Length valid"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6e3c984a-576e-4136-8ca8-ca06bda3157c",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -208,
+        272
+      ],
+      "id": "0cff8e41-a76d-4337-8a7e-ebb0fcb91044",
+      "name": "Is Saved ?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"failed\",\n  \"section\": \"market_analysis\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        80,
+        304
+      ],
+      "id": "107e6eb8-0e07-4c3d-a697-15eeb518c8b6",
+      "name": "Saving Failed"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"failed\",\n  \"section\": \"market_analysis\"\n}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        480
+      ],
+      "id": "81c4e46e-40e9-495b-a0d5-0ed986230532",
+      "name": "Generating Failed"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Taille du marché\n- Segmentation du marché\n- Analyse concurrentielle\n- Analyse PESTEL\n- Analyse SWOT\n` : `\n- Market Size\n- Market Segmentation\n- Competitive Analysis\n- PESTEL Analysis\n- SWOT Analysis\n`;\n\nconst prompt = `\nYou are writing a professional business plan section: Market Analysis.\nLanguage: ${language}\n\n## Company Context\n${context.company_presentation || 'Not provided'}\n\n## Market Information\n- Target Market: ${input.target_market || 'Not provided'}\n- Market Size: ${input.market_size || 'Not provided'}\n- Target Customer: ${input.target_customer || 'Not provided'}\n- Competitors: ${input.competitors || 'Not provided'}\n- Market Trends: ${input.market_trends || 'Not provided'}\n- Demand Drivers: ${input.demand_drivers || 'Not provided'}\n- Supply Constraints: ${input.supply_constraints || 'Not provided'}\n\nWrite a detailed Market Analysis section. Include these headings:\n${headings}\n\nRules:\n- If a field says \"Not provided\", acknowledge it professionally\n- Do not invent fictional data\n- Minimum 400 words\n- Write in ${language}\nCRITICAL INSTRUCTION — OUTPUT FORMAT:\nYou MUST return your response in exactly this format. Any other format is invalid.\n\n=== SECTION_TEXT ===\n[Write your full detailed section here]\n=== MEMORY_SUMMARY ===\nMarket Size: [value]\nTarget Segment: [value]\nKey Competitors: [value]\nCompetitive Advantage: [value]\nTop Market Trend: [value]\nSWOT Summary: [value]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'market_analysis',\n    language,\n    input_json: input,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1968,
+        480
+      ],
+      "id": "666dbdf1-2f06-4f68-8300-68817eaa4be4",
+      "name": "Build Prompt"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {
+          "systemMessage": "You are a professional business plan writer. Always respond with well-structured, professional content.\nAlways return your response in exactly this format, with no text before or after:\n\n=== SECTION_TEXT ===\n[Your full detailed section here]\n\n=== MEMORY_SUMMARY ===\n[Compact key-value facts, max 150 words, no paragraphs]\nMarket Size:\nTarget Segment:\nKey Competitors:\nCompetitive Advantage:\nTop Market Trend:\nSWOT Summary:"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1744,
+        480
+      ],
+      "id": "7881be40-fc95-407c-9b0d-1f0b6f12241d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "plan_sections",
+          "mode": "list",
+          "cachedResultName": "plan_sections"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "id",
+        "valueToMatchOn": "={{ $json.sectionId }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "generated_text",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "column": "memory_summary",
+              "value": "={{ $json.memory_summary }}"
+            },
+            {
+              "column": "tokens_input",
+              "value": "={{ $json.tokens_input }}"
+            },
+            {
+              "column": "tokens_output",
+              "value": "={{ $json.tokens_output }}"
+            },
+            {
+              "column": "tokens_total",
+              "value": "={{ $json.tokens_total }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        -432,
+        272
+      ],
+      "id": "267adff1-1133-4c1e-80c6-b713c4546397",
+      "name": "Update rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "OYe5cyJ7gIDEQOsQ",
+          "name": "Ventiqo MySQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $('AI Agent').item.json.output || '';\n\nlet textMatch = raw.match(/=== SECTION_TEXT ===([\\s\\S]*?)=== MEMORY_SUMMARY ===/);\nlet memMatch  = raw.match(/=== MEMORY_SUMMARY ===([\\s\\S]*?)$/);\n\nif (!textMatch) {\n  const parts = raw.split(/===\\s*MEMORY_SUMMARY\\s*===/i);\n  textMatch = parts.length > 1 ? [null, parts[0].replace(/===.*?===/i, '').trim()] : null;\n}\nif (!memMatch) {\n  const parts = raw.split(/===\\s*MEMORY_SUMMARY\\s*===/i);\n  memMatch = parts.length > 1 ? [null, parts[1].trim()] : null;\n}\n\nlet section_text   = textMatch ? textMatch[1].replace(/^===.*?===\\n?/i, '').trim() : raw.trim();\nsection_text = section_text.replace(/===\\s*[^=]*?\\s*===/g, '').trim();\nconst memory_summary = memMatch ? memMatch[1].trim() : '';\n\nconst promptText   = $('Build Prompt').item.json.prompt || '';\nconst tokens_input  = Math.round(promptText.length / 4);\nconst tokens_output = Math.round(raw.length / 4);\nconst tokens_total  = tokens_input + tokens_output;\n\nconst buildData = $('Build Prompt').item.json;\nreturn [{\n  json: {\n    ...buildData,\n    output: section_text,\n    memory_summary,\n    tokens_input,\n    tokens_output,\n    tokens_total,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        272
+      ],
+      "id": "bfab09df-59c3-44f9-8593-5a9a69077ba6",
+      "name": "Parse Output"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry Counter": {
+      "main": [
+        [
+          {
+            "node": "Is Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Failed?": {
+      "main": [
+        [
+          {
+            "node": "Generating Failed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Keywords": {
+      "main": [
+        [
+          {
+            "node": "Keywords valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keywords valid?": {
+      "main": [
+        [
+          {
+            "node": "Validation Length",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation Length": {
+      "main": [
+        [
+          {
+            "node": "Length valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Length valid": {
+      "main": [
+        [
+          {
+            "node": "Parse Output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Saved ?": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Saving Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Validate Keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Is Saved ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Output": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f74e36a8-d707-419c-8155-b147b9f26a94",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+  },
+  "id": "NHRXtlIkUbLRKWMi",
+  "tags": []
+}

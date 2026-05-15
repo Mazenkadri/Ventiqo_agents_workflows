@@ -1,0 +1,567 @@
+{
+  "name": "S1 - Company Presentation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "s1-company",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -448,
+        112
+      ],
+      "id": "dd8ebfc5-97e2-4df8-9f0f-f789c0d214b2",
+      "name": "Webhook",
+      "webhookId": "a4cdcc9d-1068-492e-a0f5-297597e5019d"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id || $json.sectionId;\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Présentation de l'entreprise\n- Mission et Vision\n- Fondateurs et Leadership\n- Produits et Services\n` : `\n- Company Overview\n- Mission & Vision\n- Founders & Leadership\n- Products & Services\n`;\n\n\n\nconst prompt = `\nYou are writing a professional business plan section: Company Presentation.\nLanguage: ${language}\n\n## Company Information\n- Company Name: ${input.company_name || 'Not provided'}\n- Legal Form: ${input.legal_form || 'Not provided'}\n- Industry: ${input.industry || 'Not provided'}\n- Location: ${input.location || 'Not provided'}\n- Founding Date: ${input.founding_date || 'Not provided'}\n- Founders: ${input.founders || 'Not provided'}\n- Mission: ${input.mission || 'Not provided'}\n- Vision: ${input.vision || 'Not provided'}\n- History: ${input.history || 'Not provided'}\n- Products Summary: ${input.products_summary || 'Not provided'}\n\nWrite a detailed Company Presentation section. Include these headings: ${headings}\n\nRules:\n- If a field says \"Not provided\", acknowledge it professionally\n- Do not invent fictional data\n- Minimum 400 words\n- Use professional business language\n- Write in ${language}\n\nCRITICAL INSTRUCTION — OUTPUT FORMAT:\nYou MUST return your response in exactly this format. Any other format is invalid.\n\n=== SECTION_TEXT ===\n[Write your full detailed section here]\n\n=== MEMORY_SUMMARY ===\nCompany Name: [value]\nIndustry: [value]\nLocation: [value]\nLegal Form: [value]\nFounders: [value]\nCore Product: [value]\nTarget Market: [value]\nMission: [value]\nVision: [value]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'company_presentation',\n    language,\n    input_json: input,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        112
+      ],
+      "id": "c8f6be74-5e5a-447b-a9f6-633ad49e91bc",
+      "name": "Build Prompt S1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {
+          "systemMessage": "You are a professional business plan writer.\nYou MUST respond using EXACTLY this structure, with no deviations:\n\n=== SECTION_TEXT ===\n[Your full detailed section here]\n\n=== MEMORY_SUMMARY ===\n[Compact key-value facts, max 150 words, no paragraphs]\nCompany Name: \nIndustry: \nLocation: \nLegal Form: \nFounders: \nCore Product: \nTarget Market: \nMission: \nVision:\n\nDO NOT use any other headers or delimiters. START your response with === SECTION_TEXT === and nothing else."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        112
+      ],
+      "id": "afb18c6a-ad81-45c1-b71a-572bbee5e959",
+      "name": "AI S1 Company",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"completed\",\n  \"section\": \"company_presentation\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1824,
+        -288
+      ],
+      "id": "3b9bd554-b9b6-4e11-a110-c6cf29b44e29",
+      "name": "Respond Success"
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('node');\n\nconst attempts = staticData.attempts ?? 0;\nconst newAttempts = attempts + 1;\n\nif (newAttempts >= 3) {\n    staticData.attempts = 0; // reset for next execution\n    return [{ json: { ...$json, attempts: newAttempts, is_failed: 'yes' } }];\n}\n\nstaticData.attempts = newAttempts;\nreturn [{ json: { ...$json, attempts: newAttempts, is_failed: 'no' } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        128
+      ],
+      "id": "6f9c234e-c744-4601-b34f-8bb911a5aed3",
+      "name": "Retry Counter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-failed",
+              "leftValue": "={{ $json.is_failed }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        128
+      ],
+      "id": "de9673a1-cc60-4bae-9810-7aad2174eb9d",
+      "name": "Is Failed?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $json.output || '';\n\nconst requiredKeywords = [\n    ['Company Overview', 'Présentation de l\\'entreprise', 'Aperçu'],\n    ['Mission'],\n    ['Vision'],\n    ['Founders', 'Fondateurs'],\n    ['Products', 'Produits', 'Services'],\n];\n\nconst missingKeywords = requiredKeywords.filter(group =>\n    !group.some(kw => output.toLowerCase().includes(kw.toLowerCase()))\n);\n\nreturn [{\n    json: {\n        ...$json,\n        keywords_valid: missingKeywords.length === 0 ? 'true' : 'false',\n        missing_keywords: missingKeywords.map(g => g[0]),\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        112
+      ],
+      "id": "f5c4d937-a2b7-4779-86ca-4ee556566fa6",
+      "name": "Validate Keywords"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-valid",
+              "leftValue": "={{ $json.keywords_valid }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        112
+      ],
+      "id": "9e788f20-275c-4960-b48a-a706008aff39",
+      "name": "Keywords valid?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $json.output || '';\nconst minLength = 400;\nconst length_valid = output.length >= minLength ? 'true' : 'false';\n\nreturn [{\n    json: {\n        ...$json,\n        length_valid,\n        actual_length: output.length,\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -80
+      ],
+      "id": "30c8aa00-b4fc-42a0-a085-d88590fbb895",
+      "name": "Validation Length"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "66d700f5-efc0-4520-96bf-a6c6cb27a4be",
+              "leftValue": "={{ $json.length_valid }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -80
+      ],
+      "id": "962e66e4-4814-4cc0-9e0f-84c53d1e61d2",
+      "name": "Length valid"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6e3c984a-576e-4136-8ca8-ca06bda3157c",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1536,
+        -96
+      ],
+      "id": "ce68c9fa-f9db-4155-85f8-5b73c3a51763",
+      "name": "Is Saved ?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"failed\",\n  \"section\": \"company_presentation\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1824,
+        -64
+      ],
+      "id": "3f3d09bc-dc0c-4163-8be9-cd8592ef6acc",
+      "name": "Saving Failed"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"failed\",\n  \"section\": \"company_presentation\"\n}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1680,
+        112
+      ],
+      "id": "d18a05c4-4c1f-4577-8bd7-b26a5a99f101",
+      "name": "Generating Failed"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": {
+          "__rl": true,
+          "value": "plan_sections",
+          "mode": "list",
+          "cachedResultName": "plan_sections"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "id",
+        "valueToMatchOn": "={{ $json.sectionId }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "generated_text",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "column": "memory_summary",
+              "value": "={{ $json.memory_summary }}"
+            },
+            {
+              "column": "tokens_input",
+              "value": "={{ $json.tokens_input }}"
+            },
+            {
+              "column": "tokens_output",
+              "value": "={{ $json.tokens_output }}"
+            },
+            {
+              "column": "tokens_total",
+              "value": "={{ $json.tokens_total }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1328,
+        -96
+      ],
+      "id": "5e39b53b-d7e0-4905-b4ab-b3b6e7a95028",
+      "name": "Update rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "OYe5cyJ7gIDEQOsQ",
+          "name": "Ventiqo MySQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        320
+      ],
+      "id": "bf8a2280-9371-4f84-b4e0-9304f58a64d1",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "XzkU6tJKJbN0O4NC",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $('AI S1 Company').item.json.output || '';\n\n// Try strict format first\nlet textMatch = raw.match(/=== SECTION_TEXT ===([\\s\\S]*?)=== MEMORY_SUMMARY ===/);\nlet memMatch  = raw.match(/=== MEMORY_SUMMARY ===([\\s\\S]*?)$/);\n\n// Fallback: if model used wrong delimiter, try to split on any === ... === pattern\nif (!textMatch) {\n  const parts = raw.split(/===\\s*MEMORY_SUMMARY\\s*===/i);\n  textMatch = parts.length > 1 ? [null, parts[0].replace(/===.*?===/i, '').trim()] : null;\n  // Clean any wrong header like \"=== Company Presentation ===\" from the top\n}\n\nif (!memMatch) {\n  const parts = raw.split(/===\\s*MEMORY_SUMMARY\\s*===/i);\n  memMatch = parts.length > 1 ? [null, parts[1].trim()] : null;\n}\n\n// Strip any stray === ... === header from the section text\nlet section_text   = textMatch \n  ? textMatch[1].replace(/^===.*?===\\n?/i, '').trim() \n  : raw.trim();\nsection_text = section_text.replace(/===\\s*[^=]*?\\s*===/g, '').trim();\nconst memory_summary = memMatch ? memMatch[1].trim() : '';\n\n// Token estimation\nconst systemMsg = `You are a professional business plan writer. You MUST respond using EXACTLY this structure...`;\nconst promptText    = $('Build Prompt S1').item.json.prompt || '';\nconst isArabic      = /[\\u0600-\\u06FF]/.test(raw);\nconst charsPerToken = isArabic ? 3 : 4;\n\nconst tokens_input  = Math.round((systemMsg.length + promptText.length) / charsPerToken);\nconst tokens_output = Math.round(raw.length / charsPerToken);\nconst tokens_total  = tokens_input + tokens_output;\n\nconst buildData = $('Build Prompt S1').item.json;\n\nreturn [{\n  json: {\n    ...buildData,\n    output: section_text,\n    memory_summary,\n    tokens_input,\n    tokens_output,\n    tokens_total,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        -96
+      ],
+      "id": "ebddb6ad-4816-4f2e-8f5f-9856bdd8b963",
+      "name": "Parse Output"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt S1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt S1": {
+      "main": [
+        [
+          {
+            "node": "AI S1 Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI S1 Company": {
+      "main": [
+        [
+          {
+            "node": "Validate Keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry Counter": {
+      "main": [
+        [
+          {
+            "node": "Is Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Failed?": {
+      "main": [
+        [
+          {
+            "node": "Generating Failed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Prompt S1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Keywords": {
+      "main": [
+        [
+          {
+            "node": "Keywords valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keywords valid?": {
+      "main": [
+        [
+          {
+            "node": "Validation Length",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation Length": {
+      "main": [
+        [
+          {
+            "node": "Length valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Length valid": {
+      "main": [
+        [
+          {
+            "node": "Parse Output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Success": {
+      "main": [
+        []
+      ]
+    },
+    "Is Saved ?": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Saving Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Is Saved ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI S1 Company",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Output": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "91ee77de-9d74-4c40-8f68-6ac238beca40",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+  },
+  "id": "2oU7g4iLLU3eBQGC",
+  "tags": []
+}

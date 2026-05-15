@@ -1,0 +1,98 @@
+{
+  "name": "Ventiqo mailing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "send-email",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "62154407-b49d-42dc-8e58-fc125f40e80f",
+      "name": "Webhook",
+      "webhookId": "470617ad-4dca-43dd-a9c0-6bc0197b06bd"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.body.to }}",
+        "subject": "={{ $json.body.subject }}",
+        "message": "=<!DOCTYPE html> <html> <head> <style>   body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }   .container { max-width: 480px; margin: 40px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }   .header { background: #000000; padding: 32px; text-align: center; }   .header h1 { color: #00D4FF; font-size: 28px; margin: 0; letter-spacing: 2px; }   .body { padding: 32px; text-align: center; }   .body p { color: #555; font-size: 15px; line-height: 1.6; }   .code { font-size: 42px; font-weight: 700; letter-spacing: 12px; color: #000; background: #f0fafb; border: 2px solid #00D4FF; border-radius: 12px; padding: 16px 32px; display: inline-block; margin: 24px 0; }   .footer { padding: 20px 32px; text-align: center; border-top: 1px solid #eee; }   .footer p { color: #aaa; font-size: 12px; margin: 0; } </style> </head> <body>   <div class=\"container\">     <div class=\"header\">       <h1>Ventiqo</h1>     </div>     <div class=\"body\">       <p>{{ $json.body.type === 'verification' ? 'Please verify your email address using the code below.' : 'Use the code below to reset your password.' }}</p>       <div class=\"code\">{{ $json.body.code }}</div>       <p>This code expires in <strong>10 minutes</strong>.</p>       <p style=\"color: #aaa; font-size: 13px;\">If you did not request this, please ignore this email.</p>     </div>     <div class=\"footer\">       <p>© 2026 Ventiqo. All rights reserved.</p>     </div>   </div> </body> </html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f671cb66-e9fe-4965-81e2-6f3a56847e14",
+      "name": "Send a message",
+      "webhookId": "a9fa5e12-88cc-4bba-9b43-b885894e66ac",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6bNYYtAsmzSfFO9Y",
+          "name": "Ventiqo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"sent\" }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        416,
+        0
+      ],
+      "id": "22774aa7-bf3c-4e98-91cd-2da86efa7845",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e19d0aff-f69f-4d8f-abe2-9ae8eac085da",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+  },
+  "id": "9aPn4lmbnfgHSXpm",
+  "tags": []
+}
