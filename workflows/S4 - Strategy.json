@@ -11,10 +11,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1104,
-        128
+        -2256,
+        400
       ],
-      "id": "231e90be-65e7-443c-bdd3-12f2c0f8329f",
+      "id": "0c5d84b3-43f7-4f63-a86c-db9919f0c056",
       "name": "Webhook",
       "webhookId": "556e7efb-8e32-47db-8270-83291722a63f"
     },
@@ -36,10 +36,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1152,
-        -272
+        0,
+        0
       ],
-      "id": "5b5bbbe9-1b53-4037-8eb6-a20e8cd15a9c",
+      "id": "fa77c447-8997-4efc-bf07-bc61c23437fa",
       "name": "Respond Success"
     },
     {
@@ -49,10 +49,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        512,
-        144
+        -640,
+        416
       ],
-      "id": "f675dedb-d815-408d-968c-d0391b9a1482",
+      "id": "fdb261aa-50c7-44d5-a52a-b97702d193dd",
       "name": "Retry Counter"
     },
     {
@@ -82,28 +82,28 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        752,
-        144
+        -400,
+        416
       ],
-      "id": "f405c6e4-a802-497c-b437-171d0ed459d1",
+      "id": "a9fe0628-365b-4a3d-909f-efab44906879",
       "name": "Is Failed?"
     },
     {
       "parameters": {
-        "model": "llama-3.1-8b-instant",
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        -656,
-        256
+        -1808,
+        656
       ],
-      "id": "9fba7753-8956-46dd-b056-06fa70127ccb",
+      "id": "fb345a2e-1fa7-49da-b89d-97a3ab1a6f7a",
       "name": "Groq Chat Model",
       "credentials": {
         "groqApi": {
-          "id": "XzkU6tJKJbN0O4NC",
+          "id": "WHtm7cQwd3U7HCyu",
           "name": "Groq account"
         }
       }
@@ -115,10 +115,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -368,
-        128
+        -1520,
+        400
       ],
-      "id": "d90204e1-2969-4f18-8ef2-1615ab05d91f",
+      "id": "ce32a079-a8a3-42e3-b792-a3bae5abe9b8",
       "name": "Validate Keywords"
     },
     {
@@ -148,10 +148,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -208,
-        128
+        -1360,
+        400
       ],
-      "id": "1fd299ee-6ff3-4a3f-9d19-8470ad21da5b",
+      "id": "4e3b81ea-103a-44be-84b7-458023459b7b",
       "name": "Keywords valid?"
     },
     {
@@ -161,10 +161,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        32,
-        -64
+        -1120,
+        208
       ],
-      "id": "0de42f1a-59a8-4f3c-af55-35a6297d700b",
+      "id": "1ee1d770-a906-4dae-9d6f-1f88bc0938c2",
       "name": "Validation Length"
     },
     {
@@ -195,10 +195,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        240,
-        -64
+        -912,
+        208
       ],
-      "id": "140845b1-8691-48bf-8952-200b517fb464",
+      "id": "df594a22-7e57-435d-b933-5fc16461add3",
       "name": "Length valid"
     },
     {
@@ -228,10 +228,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        864,
-        -80
+        -288,
+        192
       ],
-      "id": "e4d81cb7-3d91-4239-b2ad-3cff32c106fc",
+      "id": "30788458-e576-41ea-b57d-4cb569502666",
       "name": "Is Saved ?"
     },
     {
@@ -243,10 +243,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1152,
-        -48
+        0,
+        224
       ],
-      "id": "a3ab1262-a9dc-4010-9f4a-9c1e667612c2",
+      "id": "98c71585-4666-4222-810a-5c16ab89edd8",
       "name": "Saving Failed"
     },
     {
@@ -268,23 +268,23 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1024,
-        128
+        -128,
+        400
       ],
-      "id": "8acde9f5-5dda-4bf6-818b-e8b9064d45f2",
+      "id": "a2ef09f3-2873-4dca-9d69-8a0e3bd7374f",
       "name": "Generating Failed"
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id;\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Stratégie commerciale\n- Stratégie marketing\n- Stratégie de développement\n` : `\n- Commercial Strategy\n- Marketing Strategy\n- Development Strategy\n`;\n\nconst prompt = `\nYou are writing a professional business plan section: Strategy.\nLanguage: ${language}\n\n## Company Context\n${context.company_presentation || 'Not provided'}\n\n## Market Context\n${context.market_analysis || 'Not provided'}\n\n## Organization Context\n${context.org_management || 'Not provided'}\n\n## Strategy Information\n- Commercial Strategy: ${input.commercial_strategy || 'Not provided'}\n- Sales Channels: ${input.sales_channels || 'Not provided'}\n- Revenue Streams: ${input.revenue_streams || 'Not provided'}\n- Pricing Model: ${input.pricing_model || 'Not provided'}\n- Marketing Approach: ${input.marketing_approach || 'Not provided'}\n- Brand Positioning: ${input.brand_positioning || 'Not provided'}\n- Acquisition Channels: ${input.acquisition_channels || 'Not provided'}\n- Development Roadmap: ${input.dev_roadmap || 'Not provided'}\n- R&D Plans: ${input.rd_plans || 'Not provided'}\n- Product Milestones: ${input.product_milestones || 'Not provided'}\n\nWrite a detailed Strategy section. Include these headings: ${headings}\n\nRules:\n- Minimum 400 words\n- Write in ${language}\nCRITICAL INSTRUCTION — OUTPUT FORMAT:\nYou MUST return your response in exactly this format. Any other format is invalid.\n\n=== SECTION_TEXT ===\n[Write your full detailed section here]\n=== MEMORY_SUMMARY ===\nRevenue Model: [value]\nPricing: [value]\nSales Channels: [value]\nKey Revenue Streams: [value]\nBrand Positioning: [value]\nAcquisition Channels: [value]\nRoadmap Horizon: [value]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'strategy',\n    language,\n    input_json: input,\n  }\n}];"
+        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id;\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Stratégie commerciale\n- Stratégie marketing\n- Stratégie de développement\n` : `\n- Commercial Strategy\n- Marketing Strategy\n- Development Strategy\n`;\n\nconst prompt = `\nYou are a senior business strategist writing a professional business plan.\n\nYour task: Write the \"Strategy\" section of a business plan.\nOutput language: ${language}\n\n## COMPANY CONTEXT\n${context.company_presentation || 'Not provided'}\n\n## MARKET CONTEXT\n${context.market_analysis || 'Not provided'}\n\n## ORGANIZATION CONTEXT\n${context.org_management || 'Not provided'}\n\n## STRATEGY INPUT DATA\n- Commercial Strategy: ${input.commercial_strategy || 'Not provided'}\n- Sales Channels: ${input.sales_channels || 'Not provided'}\n- Revenue Streams: ${input.revenue_streams || 'Not provided'}\n- Pricing Model: ${input.pricing_model || 'Not provided'}\n- Marketing Approach: ${input.marketing_approach || 'Not provided'}\n- Brand Positioning: ${input.brand_positioning || 'Not provided'}\n- Acquisition Channels: ${input.acquisition_channels || 'Not provided'}\n- Development Roadmap: ${input.dev_roadmap || 'Not provided'}\n- R&D Plans: ${input.rd_plans || 'Not provided'}\n- Product Milestones: ${input.product_milestones || 'Not provided'}\n\n## RULES\n- Use ONLY the data provided above. Do NOT invent strategies, metrics, or projections.\n- For any field marked \"Not provided\", write: \"This strategic element will be defined during the planning phase.\"\n- Connect the strategy directly to market opportunities and organizational capabilities established in the context above.\n- Revenue model, pricing, and acquisition channels MUST be internally consistent with each other.\n- Write at least 400 words.\n- Use formal, strategic business language throughout.\n- Structure the section using these headings: ${headings}\n- NEVER repeat a sentence, phrase, or paragraph already written earlier in your response. Each paragraph MUST introduce new information.\n\n## OUTPUT FORMAT\nReturn your response using EXACTLY this structure. Nothing before. Nothing after.\n\n=== SECTION_TEXT ===\n[Write the full Strategy section here, using the headings above]\n\n=== MEMORY_SUMMARY ===\nRevenue Model: [value or \"Not provided\"]\nPricing: [value or \"Not provided\"]\nSales Channels: [value or \"Not provided\"]\nKey Revenue Streams: [value or \"Not provided\"]\nBrand Positioning: [value or \"Not provided\"]\nAcquisition Channels: [value or \"Not provided\"]\nRoadmap Horizon: [earliest to latest milestone date range, or \"Not provided\"]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'strategy',\n    language,\n    input_json: input,\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -880,
-        128
+        -2032,
+        400
       ],
-      "id": "3087a8c5-ef62-4db4-8d51-25f5b84b12cd",
+      "id": "d56ed712-883d-45e2-962f-4891d2e813be",
       "name": "Build Prompt"
     },
     {
@@ -298,10 +298,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -656,
-        128
+        -1808,
+        400
       ],
-      "id": "baf6400e-59de-4f47-8683-b4ca19a74363",
+      "id": "04537c97-8c76-49a6-8005-13a05cda5e4e",
       "name": "AI Agent"
     },
     {
@@ -345,15 +345,15 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        640,
-        -80
+        -512,
+        192
       ],
-      "id": "3393d515-6f54-45ed-98c0-90f897b92785",
+      "id": "227da4f9-91f0-4441-8762-527dfa02a375",
       "name": "Update rows in a table",
       "credentials": {
         "mySql": {
-          "id": "OYe5cyJ7gIDEQOsQ",
-          "name": "Ventiqo MySQL"
+          "id": "YbyXFsvQ7tbVBtF1",
+          "name": "MySQL account"
         }
       }
     },
@@ -364,10 +364,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        464,
-        -80
+        -688,
+        192
       ],
-      "id": "b8ad89c8-9ed7-44dc-929a-84c00313f50f",
+      "id": "51e26532-9001-4c7f-82e7-6f3d88640f84",
       "name": "Parse Output"
     }
   ],
@@ -548,14 +548,14 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "eccf5311-7fd3-47e8-b997-160d42b09664",
+  "versionId": "5e232986-3b5f-4ace-923f-8c565c1db8fc",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+    "instanceId": "9f1a720162674d642a06a18b9169c79fad98b1cd35c60e5162fc8a927fece21d"
   },
-  "id": "vqDiZS9xSeSRuw80",
+  "nodeGroups": [],
+  "id": "SjdO6M1BtKMDJuIR",
   "tags": []
 }

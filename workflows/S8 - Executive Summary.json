@@ -11,10 +11,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1088,
-        112
+        -2160,
+        400
       ],
-      "id": "331efe86-87b2-43fd-b2e5-4a5712080df8",
+      "id": "0e184459-526a-4c99-9db5-294d3d905efc",
       "name": "Webhook",
       "webhookId": "ea8314ce-9b62-4976-8b5b-574b5a46e3ce"
     },
@@ -36,10 +36,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1072,
-        -288
+        0,
+        0
       ],
-      "id": "086e7564-ad5b-4a06-b22e-e8c0528cc701",
+      "id": "2007f73a-c345-4dd5-8aeb-db40c7dd0304",
       "name": "Respond Success"
     },
     {
@@ -49,10 +49,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        496,
-        128
+        -576,
+        416
       ],
-      "id": "d4ffaf61-4e26-4046-adfa-e745ce22000b",
+      "id": "f4390156-7bf6-4e99-adb0-ddca37285c88",
       "name": "Retry Counter"
     },
     {
@@ -82,10 +82,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        736,
-        128
+        -336,
+        416
       ],
-      "id": "757707f8-3db1-4a66-91b8-83b063027af2",
+      "id": "ca1f6056-8bbc-4bac-9f7c-7cd48596e44f",
       "name": "Is Failed?"
     },
     {
@@ -95,10 +95,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -384,
-        112
+        -1456,
+        400
       ],
-      "id": "f0fe7d3f-9ac9-4ae7-a27e-792c9688d8ee",
+      "id": "afd3e88f-c903-4541-852e-336a8189bf3e",
       "name": "Validate Keywords"
     },
     {
@@ -128,10 +128,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -224,
-        112
+        -1296,
+        400
       ],
-      "id": "15b5cdec-7699-4058-8b4f-7eab83b6b6c6",
+      "id": "9f0c85ba-209a-42e3-9959-3bcdc760160b",
       "name": "Keywords valid?"
     },
     {
@@ -141,10 +141,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        32,
-        -80
+        -1040,
+        208
       ],
-      "id": "2d4f14a7-3df6-40ef-b140-52e6138e3e21",
+      "id": "5d7f873e-42c6-4b89-aaff-7ce1e033dc8e",
       "name": "Validation Length"
     },
     {
@@ -175,10 +175,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        224,
-        -80
+        -848,
+        208
       ],
-      "id": "8cc57587-eeec-40db-b66f-332b9cb7cbd7",
+      "id": "f8967f5b-8062-4c51-9299-28ffbe596916",
       "name": "Length valid"
     },
     {
@@ -208,10 +208,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        784,
-        -96
+        -288,
+        192
       ],
-      "id": "77d97d1e-03a3-4e1e-b3b9-3314f844eccf",
+      "id": "cb3f3701-b710-4ace-bac0-eec51767ec73",
       "name": "Is Saved ?"
     },
     {
@@ -223,10 +223,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1072,
-        -64
+        0,
+        224
       ],
-      "id": "b2e12924-8a7d-4138-af2c-1d9d63523bdb",
+      "id": "06e41630-975b-415e-a9ad-a622e3092d61",
       "name": "Saving Failed"
     },
     {
@@ -248,23 +248,23 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1008,
-        112
+        -64,
+        400
       ],
-      "id": "14f1a4c4-4312-4540-bb63-3a44c8ab675d",
+      "id": "7574ae87-28dd-4a7e-b5df-5ca72f96d1a5",
       "name": "Generating Failed"
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id;\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Aperçu de l'entreprise\n- Opportunité de marché\n- Notre solution\n- Équipe et leadership\n` : `\n- Business Overview\n- Market Opportunity\n- Our Solution\n- Team & Leadership\n`;\n\nconst prompt = `\nYou are writing a professional business plan section: Executive Summary.\nLanguage: ${language}\n\nBased on the following completed business plan sections, write a compelling Executive Summary:\n\n## Company Presentation\n${context.company_presentation || 'Not provided'}\n\n## Market Analysis\n${context.market_analysis || 'Not provided'}\n\n## Organization & Management\n${context.org_management || 'Not provided'}\n\n## Strategy\n${context.strategy || 'Not provided'}\n\n## Operational Plan\n${context.operational_plan || 'Not provided'}\n\n## Financial Plan\n${context.financial_plan || 'Not provided'}\n\n## Risk & Opportunity\n${context.risk_opportunity || 'Not provided'}\n\n## Appendices\n${context.appendices || 'Not provided'}\n\nWrite a compelling Executive Summary. Include these headings: ${headings}\n\nRules:\n- Minimum 400 words\n- This should be a concise summary of the entire business plan\n- Write in ${language}\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'executive_summary',\n    language,\n  }\n}];"
+        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id;\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Aperçu de l'entreprise\n- Opportunité de marché\n- Notre solution\n- Équipe et leadership\n` : `\n- Business Overview\n- Market Opportunity\n- Our Solution\n- Team & Leadership\n`;\n\n// Use only MEMORY_SUMMARY from each section to stay within 8K token limit\n// Your frontend should send memory_summary strings in plan_context, not full prose\nconst prompt = `\nYou are a senior business consultant writing a professional business plan.\n\nYour task: Write the \"Executive Summary\" section — the final synthesis of a completed business plan.\nOutput language: ${language}\n\n## COMPANY PRESENTATION\n${context.company_presentation || 'Not provided'}\n\n## MARKET ANALYSIS\n${context.market_analysis || 'Not provided'}\n\n## ORGANIZATION & MANAGEMENT\n${context.org_management || 'Not provided'}\n\n## STRATEGY\n${context.strategy || 'Not provided'}\n\n## OPERATIONAL PLAN\n${context.operational_plan || 'Not provided'}\n\n## FINANCIAL PLAN\n${context.financial_plan || 'Not provided'}\n\n## RISK & OPPORTUNITY\n${context.risk_opportunity || 'Not provided'}\n\n## APPENDICES\n${context.appendices || 'Not provided'}\n\n## RULES\n- Synthesize ONLY from the context sections above. Do NOT introduce new facts, figures, or claims not present in the context.\n- Every statement MUST be traceable to at least one context section above.\n- Do NOT repeat verbatim content — distill into sharp, persuasive prose.\n- NEVER repeat a sentence, phrase, or paragraph already written earlier in your response. Each paragraph MUST introduce new information.\n- Financial figures (revenue, costs, profit, breakeven) MUST match EXACTLY the values in the Financial Plan context. Do not round or restate them differently.\n- Open with a single punchy paragraph (3–4 sentences max) stating: what the company does, who it serves, what makes it different, and why now. Do NOT open with the company name or founding date.\n- Do NOT open with the problem statement alone — balance problem + solution + opportunity.\n- Avoid these generic phrases entirely: \"poised to capitalize\", \"committed to innovation\", \"unique value proposition\", \"well-positioned\", \"high-quality product\". Replace with specific facts and figures.\n- The tone MUST be confident and investor-facing throughout.\n- Write at least 400 words.\n- Use formal, compelling business language.\n- Structure using these headings: ${headings}\n\n## OUTPUT FORMAT\nReturn your response using EXACTLY this structure. Nothing before. Nothing after.\n\n=== SECTION_TEXT ===\n[Write the full Executive Summary here, using the headings above]\n\n=== MEMORY_SUMMARY ===\nBusiness Concept: [1-sentence: what the company does and for whom]\nMarket Opportunity: [1-sentence: market size and target segment with exact figures]\nCompetitive Edge: [1-sentence: specific differentiator — no generic phrases]\nRevenue Model: [1-sentence with actual pricing figures from strategy context]\nFinancial Highlight: [Y1/Y2/Y3 revenue figures + breakeven month — exact values]\nFunding Ask: [value or \"Self-funded\"]\nRisk Flag: [top risk in 5 words or fewer]\nProfitability Status: [copy exactly from Financial Plan context]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'executive_summary',\n    language,\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -896,
-        112
+        -1968,
+        400
       ],
-      "id": "a23a5160-9203-45d4-b039-ccb496ffb845",
+      "id": "66134827-70cc-4dfb-b5fe-386a10fe34b9",
       "name": "Build Prompt"
     },
     {
@@ -278,10 +278,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -672,
-        112
+        -1744,
+        400
       ],
-      "id": "52ed291a-ff1f-4a9a-8be9-6b025ca57eb2",
+      "id": "34ee87db-bdd2-462d-9fc7-bf99bed81e75",
       "name": "AI Agent"
     },
     {
@@ -325,15 +325,15 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        592,
-        -96
+        -480,
+        192
       ],
-      "id": "1e952d03-4b1b-42f6-9f89-2299d393d10a",
+      "id": "1d346d23-7e88-4e36-aa58-743ddc6b642f",
       "name": "Update rows in a table",
       "credentials": {
         "mySql": {
-          "id": "OYe5cyJ7gIDEQOsQ",
-          "name": "Ventiqo MySQL"
+          "id": "YbyXFsvQ7tbVBtF1",
+          "name": "MySQL account"
         }
       }
     },
@@ -344,28 +344,28 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        400,
-        -96
+        -672,
+        192
       ],
-      "id": "901007fe-cf25-4527-b482-209648b22abd",
+      "id": "e5a65015-a09d-4c1b-8e00-7de858731f5e",
       "name": "parse output"
     },
     {
       "parameters": {
-        "model": "llama-3.1-8b-instant",
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        -672,
-        272
+        -1744,
+        688
       ],
-      "id": "8538e368-9d4a-42da-968f-0fcc5a296218",
+      "id": "b624c610-5bcf-44aa-a143-58b8cf6113e8",
       "name": "Groq Chat Model",
       "credentials": {
         "groqApi": {
-          "id": "XzkU6tJKJbN0O4NC",
+          "id": "WHtm7cQwd3U7HCyu",
           "name": "Groq account"
         }
       }
@@ -548,14 +548,14 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "6e88e067-e1b6-4cfc-a637-4fd8e51a0778",
+  "versionId": "e4c99df5-e3d7-43f1-a5ed-e80716e16fc9",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+    "instanceId": "9f1a720162674d642a06a18b9169c79fad98b1cd35c60e5162fc8a927fece21d"
   },
-  "id": "tUUsAd2F4ymuWhNZ",
+  "nodeGroups": [],
+  "id": "6HcZSgadl5KaYBTo",
   "tags": []
 }

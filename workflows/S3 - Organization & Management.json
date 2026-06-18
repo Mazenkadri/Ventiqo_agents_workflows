@@ -11,10 +11,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1024,
-        112
+        -2256,
+        400
       ],
-      "id": "e2f1fba4-2b72-4e62-9600-190ea2eb5a0f",
+      "id": "24c888b1-232c-4a26-b139-155fdd59235b",
       "name": "Webhook",
       "webhookId": "e48410dd-2e64-406e-be6f-67ed2401b40f"
     },
@@ -36,10 +36,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1232,
-        -288
+        0,
+        0
       ],
-      "id": "7756a4f4-1f2a-42e2-8724-b09cd9140416",
+      "id": "28364afc-8b60-419a-bf7d-f861c7c2efc9",
       "name": "Respond Success"
     },
     {
@@ -49,10 +49,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        576,
-        128
+        -656,
+        416
       ],
-      "id": "9f62fcbb-48bc-4f97-96ea-2cf8b2083220",
+      "id": "def83ddc-696b-48d1-bbe8-028b8109592d",
       "name": "Retry Counter"
     },
     {
@@ -82,28 +82,28 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        816,
-        128
+        -416,
+        416
       ],
-      "id": "5eee2e7b-c742-4f3d-9d4b-8e4c4e6165e6",
+      "id": "89c213b6-2dc5-4364-ba65-38c3660d2b30",
       "name": "Is Failed?"
     },
     {
       "parameters": {
-        "model": "llama-3.1-8b-instant",
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        -592,
-        240
+        -1824,
+        640
       ],
-      "id": "5c8bc725-07f7-45da-bfff-d4dcc3f41ac6",
+      "id": "8a7daf2b-10ad-4a75-995c-b7d1b9a63e63",
       "name": "Groq Chat Model",
       "credentials": {
         "groqApi": {
-          "id": "XzkU6tJKJbN0O4NC",
+          "id": "WHtm7cQwd3U7HCyu",
           "name": "Groq account"
         }
       }
@@ -115,10 +115,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -304,
-        112
+        -1536,
+        400
       ],
-      "id": "42cb379d-1509-42bc-9850-d550e04bed38",
+      "id": "9f01b728-0932-4bc2-b46d-26d9c342e681",
       "name": "Validate Keywords"
     },
     {
@@ -148,10 +148,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -144,
-        112
+        -1376,
+        400
       ],
-      "id": "e12514fa-c2f8-42a4-ae30-bce9d2a4941a",
+      "id": "dee00ff2-7a78-496c-8e59-7d75cd037e7f",
       "name": "Keywords valid?"
     },
     {
@@ -161,10 +161,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        96,
-        -80
+        -1136,
+        208
       ],
-      "id": "d58ae7e6-e30b-44d3-9e10-15342d658a34",
+      "id": "22142691-f25f-4855-93f9-50ee17940408",
       "name": "Validation Length"
     },
     {
@@ -195,10 +195,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        304,
-        -80
+        -928,
+        208
       ],
-      "id": "55ff664f-a4ae-4ad7-9239-3bb2d79692af",
+      "id": "8f95d45c-482d-4dea-9f10-2aec6bea7ba5",
       "name": "Length valid"
     },
     {
@@ -228,10 +228,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        944,
-        -96
+        -288,
+        192
       ],
-      "id": "d4c0577c-a7e1-4d93-a597-a804c61d8fac",
+      "id": "0e0540fc-f8bc-416d-9b41-eed4dff72e27",
       "name": "Is Saved ?"
     },
     {
@@ -243,10 +243,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1232,
-        -64
+        0,
+        224
       ],
-      "id": "f6effb54-c3eb-4f69-b9d4-294b6f73b20f",
+      "id": "e10d88a4-21ab-474f-b7e2-9ca60d2927ed",
       "name": "Saving Failed"
     },
     {
@@ -268,23 +268,23 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1088,
-        112
+        -144,
+        400
       ],
-      "id": "67f20ab0-346c-4778-ac6f-e879c0e26289",
+      "id": "f8e0e3be-ef62-4036-a4cf-9e0a85a48a95",
       "name": "Generating Failed"
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Équipe de direction\n- Structure organisationnelle\n- Gouvernance\n- Cadre juridique\n` : `\n- Management Team\n- Organizational Structure\n- Governance\n- Legal Framework\n`;\n\nconst prompt = `\nYou are writing a professional business plan section: Organization & Management.\nLanguage: ${language}\n\n## Company Context\n${context.company_presentation || 'Not provided'}\n\n## Market Context\n${context.market_analysis || 'Not provided'}\n\n## Organization Information\n- Management Team: ${input.management_team || 'Not provided'}\n- Governance Model: ${input.governance_model || 'Not provided'}\n- Organizational Structure: ${input.org_structure || 'Not provided'}\n- Key Departments: ${input.key_departments || 'Not provided'}\n- Advisory Board: ${input.advisory_board || 'Not provided'}\n- Legal Setup: ${input.legal_setup || 'Not provided'}\n\nWrite a detailed Organization & Management section. Include these headings: ${headings}\n\nRules:\n- Minimum 400 words\n- Write in ${language}\nCRITICAL INSTRUCTION — OUTPUT FORMAT:\nYou MUST return your response in exactly this format. Any other format is invalid.\n\n=== SECTION_TEXT ===\n[Write your full detailed section here]\n=== MEMORY_SUMMARY ===\nCEO: [value]\nCTO: [value]\nTeam Size: [value]\nStructure: [value]\nLegal Entity: [value]\nAdvisory Board: [value]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'org_management',\n    language,\n    input_json: input,\n  }\n}];"
+        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Équipe de direction\n- Structure organisationnelle\n- Gouvernance\n- Cadre juridique\n` : `\n- Management Team\n- Organizational Structure\n- Governance\n- Legal Framework\n`;\n\nconst prompt = `\nYou are a senior organizational consultant writing a professional business plan.\n\nYour task: Write the \"Organization & Management\" section of a business plan.\nOutput language: ${language}\n\n## COMPANY CONTEXT\n${context.company_presentation || 'Not provided'}\n\n## MARKET CONTEXT\n${context.market_analysis || 'Not provided'}\n\n## ORGANIZATION INPUT DATA\n- Management Team: ${input.management_team || 'Not provided'}\n- Governance Model: ${input.governance_model || 'Not provided'}\n- Organizational Structure: ${input.org_structure || 'Not provided'}\n- Key Departments: ${input.key_departments || 'Not provided'}\n- Advisory Board: ${input.advisory_board || 'Not provided'}\n- Legal Setup: ${input.legal_setup || 'Not provided'}\n\n## RULES\n- Use ONLY the data provided above. Do NOT invent names, roles, or credentials.\n- For any field marked \"Not provided\", write: \"This will be defined as the organizational structure matures.\"\n- Where company or market context is available, align the org structure to the company's stage and market demands.\n- Write at least 400 words.\n- Use formal, professional business language throughout.\n- Structure the section using these headings: ${headings}\n- NEVER repeat a sentence, phrase, or paragraph already written earlier in your response. Each paragraph MUST introduce new information.\n\n## OUTPUT FORMAT\nReturn your response using EXACTLY this structure. Nothing before. Nothing after.\n\n=== SECTION_TEXT ===\n[Write the full Organization & Management section here, using the headings above]\n\n=== MEMORY_SUMMARY ===\nCEO: [full name and brief role description, or \"Not provided\"]\nCTO: [full name and brief role description, or \"Not provided\"]\nTeam Size: [value or \"Not provided\"]\nStructure: [flat / hierarchical / matrix / other — inferred from org_structure or \"Not provided\"]\nLegal Entity: [value from legal_setup or \"Not provided\"]\nAdvisory Board: [names or \"Not provided\"]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'org_management',\n    language,\n    input_json: input,\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -816,
-        112
+        -2048,
+        400
       ],
-      "id": "613744b1-d8b2-461f-83fd-bceb1e8d5db6",
+      "id": "203613c1-038b-4154-9ac4-292f904bafa3",
       "name": "Build Prompt"
     },
     {
@@ -328,15 +328,15 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        720,
-        -96
+        -512,
+        192
       ],
-      "id": "4db63b0d-1aa6-41c4-a742-5b3e7e48bea1",
+      "id": "fefbb3d6-d9d4-40a8-97e2-703ea208214e",
       "name": "Update rows in a table",
       "credentials": {
         "mySql": {
-          "id": "OYe5cyJ7gIDEQOsQ",
-          "name": "Ventiqo MySQL"
+          "id": "YbyXFsvQ7tbVBtF1",
+          "name": "MySQL account"
         }
       }
     },
@@ -347,10 +347,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        544,
-        -96
+        -688,
+        192
       ],
-      "id": "6337910c-27ce-4897-bf7d-93ec3b6d766d",
+      "id": "f2146348-dc59-42f3-8234-d6e19cee5b1b",
       "name": "Parse Output"
     },
     {
@@ -364,10 +364,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -592,
-        112
+        -1824,
+        400
       ],
-      "id": "3a9a789b-985c-48ab-8f1d-76d024663470",
+      "id": "e9880b90-c86f-4541-81a2-f2dc90f943b4",
       "name": "AI Agent"
     }
   ],
@@ -548,14 +548,14 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "4874bcc6-2c0e-425a-8d47-ea496597d938",
+  "versionId": "b7a15ecf-1b72-497c-9583-05c169e14ced",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+    "instanceId": "9f1a720162674d642a06a18b9169c79fad98b1cd35c60e5162fc8a927fece21d"
   },
-  "id": "rCKIhGfCzOym5iJA",
+  "nodeGroups": [],
+  "id": "gt8b0Dr09SzGhFZq",
   "tags": []
 }

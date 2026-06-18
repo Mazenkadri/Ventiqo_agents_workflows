@@ -11,24 +11,24 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -448,
-        112
+        -2272,
+        400
       ],
-      "id": "dd8ebfc5-97e2-4df8-9f0f-f789c0d214b2",
+      "id": "82592606-1c5a-402e-958a-d2b45d207fd9",
       "name": "Webhook",
       "webhookId": "a4cdcc9d-1068-492e-a0f5-297597e5019d"
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id || $json.sectionId;\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Présentation de l'entreprise\n- Mission et Vision\n- Fondateurs et Leadership\n- Produits et Services\n` : `\n- Company Overview\n- Mission & Vision\n- Founders & Leadership\n- Products & Services\n`;\n\n\n\nconst prompt = `\nYou are writing a professional business plan section: Company Presentation.\nLanguage: ${language}\n\n## Company Information\n- Company Name: ${input.company_name || 'Not provided'}\n- Legal Form: ${input.legal_form || 'Not provided'}\n- Industry: ${input.industry || 'Not provided'}\n- Location: ${input.location || 'Not provided'}\n- Founding Date: ${input.founding_date || 'Not provided'}\n- Founders: ${input.founders || 'Not provided'}\n- Mission: ${input.mission || 'Not provided'}\n- Vision: ${input.vision || 'Not provided'}\n- History: ${input.history || 'Not provided'}\n- Products Summary: ${input.products_summary || 'Not provided'}\n\nWrite a detailed Company Presentation section. Include these headings: ${headings}\n\nRules:\n- If a field says \"Not provided\", acknowledge it professionally\n- Do not invent fictional data\n- Minimum 400 words\n- Use professional business language\n- Write in ${language}\n\nCRITICAL INSTRUCTION — OUTPUT FORMAT:\nYou MUST return your response in exactly this format. Any other format is invalid.\n\n=== SECTION_TEXT ===\n[Write your full detailed section here]\n\n=== MEMORY_SUMMARY ===\nCompany Name: [value]\nIndustry: [value]\nLocation: [value]\nLegal Form: [value]\nFounders: [value]\nCore Product: [value]\nTarget Market: [value]\nMission: [value]\nVision: [value]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'company_presentation',\n    language,\n    input_json: input,\n  }\n}];"
+        "jsCode": "const body = $json.body || $json;\nconst sectionId = body.section_id || $json.sectionId;\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\n\nconst headings = language === 'french' ? `\n- Présentation de l'entreprise\n- Mission et Vision\n- Fondateurs et Leadership\n- Produits et Services\n` : `\n- Company Overview\n- Mission & Vision\n- Founders & Leadership\n- Products & Services\n`;\n\n\n\nconst prompt = `\nYou are a senior business consultant writing a professional business plan.\n\nYour task: Write the \"Company Presentation\" section of a business plan.\nOutput language: ${language}\n\n## INPUT DATA\n- Company Name: ${input.company_name || 'Not provided'}\n- Legal Form: ${input.legal_form || 'Not provided'}\n- Industry: ${input.industry || 'Not provided'}\n- Location: ${input.location || 'Not provided'}\n- Founding Date: ${input.founding_date || 'Not provided'}\n- Founders: ${input.founders || 'Not provided'}\n- Mission: ${input.mission || 'Not provided'}\n- Vision: ${input.vision || 'Not provided'}\n- History: ${input.history || 'Not provided'}\n- Products Summary: ${input.products_summary || 'Not provided'}\n\n## RULES\n- Use ONLY the data provided above. Do NOT invent or assume any details.\n- For any field marked \"Not provided\", write a neutral placeholder sentence such as: \"This information will be defined as the company develops.\"\n- Write at least 400 words.\n- Use formal, professional business language throughout.\n- Structure the section using these headings: ${headings}\n- NEVER repeat a sentence, phrase, or paragraph already written earlier in your response. Each paragraph MUST introduce new information.\n\n## OUTPUT FORMAT\nYou MUST return your response using EXACTLY this structure. Do not add anything before or after it.\n\n=== SECTION_TEXT ===\n[Write the full Company Presentation section here, using the headings above]\n\n=== MEMORY_SUMMARY ===\nCompany Name: [value or \"Not provided\"]\nIndustry: [value or \"Not provided\"]\nLocation: [value or \"Not provided\"]\nLegal Form: [value or \"Not provided\"]\nFounders: [value or \"Not provided\"]\nCore Product: [value or \"Not provided\"]\nTarget Market: [infer briefly from industry/products or write \"Not provided\"]\nMission: [value or \"Not provided\"]\nVision: [value or \"Not provided\"]\n`;\n\nreturn [{\n  json: {\n    prompt,\n    sectionId: sectionId,\n    business_plan_id: businessPlanId,\n    section_name: 'company_presentation',\n    language,\n    input_json: input,\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -224,
-        112
+        -2048,
+        400
       ],
-      "id": "c8f6be74-5e5a-447b-a9f6-633ad49e91bc",
+      "id": "e1972e20-85a6-4caf-a1ab-cb84e76d823c",
       "name": "Build Prompt S1"
     },
     {
@@ -42,10 +42,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        0,
-        112
+        -1824,
+        400
       ],
-      "id": "afb18c6a-ad81-45c1-b71a-572bbee5e959",
+      "id": "cb345f88-631b-45a0-936d-180337e33846",
       "name": "AI S1 Company",
       "retryOnFail": false
     },
@@ -67,10 +67,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1824,
-        -288
+        0,
+        0
       ],
-      "id": "3b9bd554-b9b6-4e11-a110-c6cf29b44e29",
+      "id": "1ce1deec-2fec-47d8-b27b-a384e08c7bf2",
       "name": "Respond Success"
     },
     {
@@ -80,10 +80,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1168,
-        128
+        -656,
+        416
       ],
-      "id": "6f9c234e-c744-4601-b34f-8bb911a5aed3",
+      "id": "47c0e2dc-4918-4c3f-9ae7-845e78d8e226",
       "name": "Retry Counter"
     },
     {
@@ -113,10 +113,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1408,
-        128
+        -416,
+        416
       ],
-      "id": "de9673a1-cc60-4bae-9810-7aad2174eb9d",
+      "id": "bb8f1f87-61fb-4d36-957c-550130fe8bc9",
       "name": "Is Failed?"
     },
     {
@@ -126,10 +126,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        288,
-        112
+        -1536,
+        400
       ],
-      "id": "f5c4d937-a2b7-4779-86ca-4ee556566fa6",
+      "id": "cd6ef03c-ba05-4f40-9a2c-a03c12603bfd",
       "name": "Validate Keywords"
     },
     {
@@ -159,10 +159,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        448,
-        112
+        -1376,
+        400
       ],
-      "id": "9e788f20-275c-4960-b48a-a706008aff39",
+      "id": "e94b3382-7b13-4f05-9a63-a86e14b56123",
       "name": "Keywords valid?"
     },
     {
@@ -172,10 +172,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        688,
-        -80
+        -1136,
+        208
       ],
-      "id": "30c8aa00-b4fc-42a0-a085-d88590fbb895",
+      "id": "fd5fed14-ddf4-4699-b9b0-6794cb9f3ab2",
       "name": "Validation Length"
     },
     {
@@ -206,10 +206,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        896,
-        -80
+        -928,
+        208
       ],
-      "id": "962e66e4-4814-4cc0-9e0f-84c53d1e61d2",
+      "id": "b45075bd-67fc-4a32-a64e-56be15710e9c",
       "name": "Length valid"
     },
     {
@@ -239,10 +239,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        1536,
-        -96
+        -288,
+        192
       ],
-      "id": "ce68c9fa-f9db-4155-85f8-5b73c3a51763",
+      "id": "7b56bad0-c620-4405-91bf-2b8bee5de7b4",
       "name": "Is Saved ?"
     },
     {
@@ -254,10 +254,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1824,
-        -64
+        0,
+        224
       ],
-      "id": "3f3d09bc-dc0c-4163-8be9-cd8592ef6acc",
+      "id": "d73f58c7-f09b-43c8-a901-388b9bfdd846",
       "name": "Saving Failed"
     },
     {
@@ -279,10 +279,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1680,
-        112
+        -144,
+        400
       ],
-      "id": "d18a05c4-4c1f-4577-8bd7-b26a5a99f101",
+      "id": "135e0aaf-57ec-48fe-ac7f-8bd4069a3ced",
       "name": "Generating Failed"
     },
     {
@@ -326,34 +326,34 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        1328,
-        -96
+        -496,
+        192
       ],
-      "id": "5e39b53b-d7e0-4905-b4ab-b3b6e7a95028",
+      "id": "3809528e-2900-4790-baf9-8ea8586627e5",
       "name": "Update rows in a table",
       "credentials": {
         "mySql": {
-          "id": "OYe5cyJ7gIDEQOsQ",
-          "name": "Ventiqo MySQL"
+          "id": "YbyXFsvQ7tbVBtF1",
+          "name": "MySQL account"
         }
       }
     },
     {
       "parameters": {
-        "model": "llama-3.1-8b-instant",
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        -144,
-        320
+        -1968,
+        608
       ],
-      "id": "bf8a2280-9371-4f84-b4e0-9304f58a64d1",
+      "id": "217ca6a5-16f5-4ba1-a916-513727ab2aaa",
       "name": "Groq Chat Model",
       "credentials": {
         "groqApi": {
-          "id": "XzkU6tJKJbN0O4NC",
+          "id": "WHtm7cQwd3U7HCyu",
           "name": "Groq account"
         }
       }
@@ -365,10 +365,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1136,
-        -96
+        -688,
+        192
       ],
-      "id": "ebddb6ad-4816-4f2e-8f5f-9856bdd8b963",
+      "id": "7403ca2b-04aa-48cc-9a29-6f795465a23c",
       "name": "Parse Output"
     }
   ],
@@ -494,11 +494,6 @@
         ]
       ]
     },
-    "Respond Success": {
-      "main": [
-        []
-      ]
-    },
     "Is Saved ?": {
       "main": [
         [
@@ -554,14 +549,14 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "91ee77de-9d74-4c40-8f68-6ac238beca40",
+  "versionId": "02f602e2-3332-48c3-a126-0c75541ef088",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+    "instanceId": "9f1a720162674d642a06a18b9169c79fad98b1cd35c60e5162fc8a927fece21d"
   },
-  "id": "2oU7g4iLLU3eBQGC",
+  "nodeGroups": [],
+  "id": "4L0FtgoFE33NZ5B0",
   "tags": []
 }

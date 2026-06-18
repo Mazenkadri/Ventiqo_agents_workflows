@@ -11,10 +11,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1120,
-        112
+        -2352,
+        400
       ],
-      "id": "b2534877-51ab-43d9-b89a-455210167848",
+      "id": "9f7ff4bf-baa1-4b4c-ae26-c9331ce10dec",
       "name": "Webhook",
       "webhookId": "9be09416-77c0-4ed5-819c-f122d35fde11"
     },
@@ -36,10 +36,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1232,
-        -288
+        0,
+        0
       ],
-      "id": "32c6ccac-fe3b-48de-bbde-af310443fc21",
+      "id": "5bf77a8e-0dc9-4020-8929-f87e61eac4a8",
       "name": "Respond Success"
     },
     {
@@ -49,10 +49,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        480,
-        128
+        -752,
+        416
       ],
-      "id": "16337902-631a-4c0d-b8ad-e8887ae4c4a6",
+      "id": "eefb0941-f56b-4b00-8d5b-3e527174ea0e",
       "name": "Retry Counter"
     },
     {
@@ -82,28 +82,28 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        720,
-        128
+        -512,
+        416
       ],
-      "id": "4cc608d7-52ad-4955-86aa-8faad59a62c1",
+      "id": "e645195a-fcaa-42c6-bdc1-972e30c8c47b",
       "name": "Is Failed?"
     },
     {
       "parameters": {
-        "model": "llama-3.1-8b-instant",
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        -688,
-        240
+        -1920,
+        672
       ],
-      "id": "4b5385be-3f6e-412a-9d27-73d9bc61941d",
+      "id": "bd5ee087-dd1a-45c4-9701-d7aa7cd126f6",
       "name": "Groq Chat Model",
       "credentials": {
         "groqApi": {
-          "id": "XzkU6tJKJbN0O4NC",
+          "id": "WHtm7cQwd3U7HCyu",
           "name": "Groq account"
         }
       }
@@ -115,10 +115,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -400,
-        112
+        -1632,
+        400
       ],
-      "id": "81a8a71a-d714-4522-baff-52bbc8fdce07",
+      "id": "060a22ca-b6a5-4b79-8a52-6ac1b8f6c80c",
       "name": "Validate Keywords"
     },
     {
@@ -148,10 +148,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        -240,
-        112
+        -1472,
+        400
       ],
-      "id": "0c106438-ce29-4f29-81f2-f7411018d2d2",
+      "id": "4c99fbca-ea4d-4b79-8b85-147bbd44343f",
       "name": "Keywords valid?"
     },
     {
@@ -161,10 +161,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        0,
-        -80
+        -1232,
+        208
       ],
-      "id": "2ff88b57-1ba3-4e8d-a7e7-ee10878bfc27",
+      "id": "fd35174d-f69a-4fa7-857a-d67f770e5524",
       "name": "Validation Length"
     },
     {
@@ -195,10 +195,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        208,
-        -80
+        -1024,
+        208
       ],
-      "id": "e77521db-64e7-4354-9b11-1fe2ab6b2476",
+      "id": "96271ef9-3060-4e5d-84be-c2f8dbdfa7f0",
       "name": "Length valid"
     },
     {
@@ -228,10 +228,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        944,
-        -96
+        -288,
+        192
       ],
-      "id": "0e704895-5d8c-4a10-a833-aac8db889cfd",
+      "id": "8a1d83db-c3e5-4fc4-aa99-d5208b22842e",
       "name": "Is Saved ?"
     },
     {
@@ -243,10 +243,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1232,
-        -80
+        0,
+        208
       ],
-      "id": "c321c9e2-c4c3-4806-9d70-2ca6f9e07ac4",
+      "id": "c2d597bb-e625-4307-9368-c9223e3464e8",
       "name": "Saving Failed"
     },
     {
@@ -268,23 +268,23 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1040,
-        112
+        -192,
+        400
       ],
-      "id": "4f4297fe-774b-4937-9402-58faa3bda2a7",
+      "id": "2305437c-e1e6-40f3-bd69-df71b6d4c232",
       "name": "Generating Failed"
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body || $json;\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\nconst sectionId = body.section_id;\n\nconst headings = language === 'french' ? `\n- Projections de revenus\n- Structure des coûts\n- Besoins en financement\n- Analyse du seuil de rentabilité\n` : `\n- Revenue Projections\n- Cost Structure\n- Funding Requirements\n- Break-even Analysis\n`;\n\nconst prompt = `\nYou are a professional financial advisor writing the Financial Plan section of a business plan.\nLanguage: ${language}\n\n## Company Context\n${context.company_presentation || 'Not provided'}\n\n## Strategy Context\n${context.strategy || 'Not provided'}\n\n## Operational Context\n${context.operational_plan || 'Not provided'}\n\n## User Provided Financial Data\n- Startup Costs: ${input.startup_costs || 'Not provided'}\n- Monthly Burn Rate: ${input.monthly_burn || 'Not provided'}\n- Break-even Point: ${input.breakeven || 'Not provided'}\n- Revenue Year 1: ${input.revenue_y1 || 'Not provided'}\n- Revenue Year 2: ${input.revenue_y2 || 'Not provided'}\n- Revenue Year 3: ${input.revenue_y3 || 'Not provided'}\n- Funding Sources: ${input.funding_sources || 'Not provided'}\n- Financial Assumptions: ${input.financial_assumptions || 'Not provided'}\n\n## Your Task\n\nYou must produce TWO things in your response:\n\n### PART 1 — NARRATIVE TEXT\nWrite a detailed Financial Plan section with these headings: ${headings}\n\nUse the user's data as a base but enhance it with realistic projections.\nBase your projections on the company's industry, location, and business model described in the Company Context above.\nMake projections ambitious but achievable given the specific market, domain, and region of this business.\nMinimum 400 words. Write in ${language}.\n\n### PART 2 — STRUCTURED DATA\nAfter the narrative, add this exact block with realistic numbers derived from the narrative:\n\n---CHART_DATA_START---\n{\n  \"revenue\": [YEAR1_NUMBER, YEAR2_NUMBER, YEAR3_NUMBER],\n  \"costs\": [YEAR1_COSTS, YEAR2_COSTS, YEAR3_COSTS],\n  \"profit\": [YEAR1_PROFIT, YEAR2_PROFIT, YEAR3_PROFIT],\n  \"breakeven_month\": MONTH_NUMBER,\n  \"arpu\": MONTHLY_REVENUE_PER_USER,\n  \"monthly_growth_rate\": PERCENTAGE,\n  \"cost_breakdown_y1\": {\n    \"development\": NUMBER,\n    \"marketing\": NUMBER,\n    \"operations\": NUMBER\n  },\n  \"cost_breakdown_y2\": {\n    \"development\": NUMBER,\n    \"marketing\": NUMBER,\n    \"operations\": NUMBER\n  },\n  \"cost_breakdown_y3\": {\n    \"development\": NUMBER,\n    \"marketing\": NUMBER,\n    \"operations\": NUMBER\n  }\n}\n---CHART_DATA_END---\n---MEMORY_SUMMARY---\nStartup Costs: [value]\nMonthly Burn: [value]\nBreakeven: [value]\nRevenue Y1: [value]\nRevenue Y2: [value]\nRevenue Y3: [value]\nFunding: [value]\nCost Structure: [value]\n\nRules:\n- Numbers must be realistic and consistent with the narrative\n- All numbers must be plain integers or decimals, no currency symbols\n- The profit array = revenue minus costs for each year\n- Base all projections on the company industry, domain and region from the context above\n`;\n\nreturn [{\n    json: {\n        prompt,\n        section_id: sectionId,\n        business_plan_id: businessPlanId,\n        section_name: 'financial_plan',\n        language,\n        input_json: input,\n    }\n}];"
+        "jsCode": "const body = $json.body || $json;\nconst input = body.input_json || {};\nconst context = body.plan_context || {};\nconst language = body.language || 'english';\nconst businessPlanId = body.business_plan_id;\nconst sectionId = body.section_id;\n\nconst headings = language === 'french' ? `\n- Projections de revenus\n- Structure des coûts\n- Besoins en financement\n- Analyse du seuil de rentabilité\n` : `\n- Revenue Projections\n- Cost Structure\n- Funding Requirements\n- Break-even Analysis\n`;\n\nconst strategyContext = context.strategy || '';\n\nconst prompt = `\nYou are a senior financial advisor writing a professional business plan.\n\nYour task: Write the \"Financial Plan\" section of a business plan.\nOutput language: ${language}\n\n## COMPANY CONTEXT\n${context.company_presentation || 'Not provided'}\n\n## STRATEGY CONTEXT\n${strategyContext || 'Not provided'}\n\n## OPERATIONAL CONTEXT\n${context.operational_plan || 'Not provided'}\n\n## FINANCIAL INPUT DATA\n- Startup Costs: ${input.startup_costs || 'Not provided'}\n- Monthly Burn Rate: ${input.monthly_burn || 'Not provided'}\n- Break-even Point: ${input.breakeven || 'Not provided'}\n- Revenue Year 1: ${input.revenue_y1 || 'Not provided'}\n- Revenue Year 2: ${input.revenue_y2 || 'Not provided'}\n- Revenue Year 3: ${input.revenue_y3 || 'Not provided'}\n- Funding Sources: ${input.funding_sources || 'Not provided'}\n- Financial Assumptions: ${input.financial_assumptions || 'Not provided'}\n\n## RULES\n\n### Data integrity\n- NEVER change user-provided revenue figures. Use Revenue Y1, Y2, Y3 exactly as given above.\n- NEVER invent or adjust pricing tiers. Any pricing figures cited in the narrative MUST match exactly what appears in the Strategy Context above. If no pricing is in the Strategy Context, do not state any pricing figures.\n- If a financial field is \"Not provided\", derive a realistic estimate grounded in the company's industry, location, business model, and scale described in the Company Context — not from generic assumptions.\n\n### Math consistency — follow these steps in order before writing anything\n- Step 1: Derive total costs using the Monthly Burn Rate as a hard floor.\n  Year 1 costs MUST equal Monthly Burn Rate × 12 at minimum.\n  Example: if Monthly Burn Rate is $18,000/month, Year 1 costs MUST be at least $216,000.\n  Scale Year 2 and Year 3 costs upward from Year 1 based on the hiring plan and operational growth described in the Operational Context.\n  NEVER produce a cost figure below the burn rate floor. A cost figure lower than Monthly Burn Rate × 12 is mathematically impossible and must never appear.\n- Step 2: Compute profit[year] = revenue[year] - costs[year] for all three years.\n- Step 3: Split total costs into development, marketing, and operations so that development + marketing + operations = total costs exactly for each year. Verify the sum before outputting.\n- Step 4: Verify the cost breakdown makes sense given the business model in Company Context. The category that grows fastest should reflect the dominant growth driver. Do not default to any fixed pattern.\n- Step 5: Write the narrative using ONLY the figures computed in Steps 1–4. The profit figures in the narrative MUST be identical to those in Step 2. Do not write the narrative first and compute later.\n\n### Losses and profitability\n- If costs exceed revenue in any year (profit is negative), add a paragraph titled \"Investment Rationale\" explaining specifically WHY costs exceed revenue for that year and in which month or quarter profitability is expected.\n- Add an \"Adjusted Scenario\" subsection ONLY IF ALL THREE years show a negative profit with no path to recovery. If Year 2 or Year 3 already shows a profit, do NOT include an Adjusted Scenario.\n- If an Adjusted Scenario is needed, label it clearly and show revised figures where at least Y3 reaches breakeven or profit.\n\n### ARPU\n- ARPU must be derived from the actual pricing tiers in the Strategy Context and the expected client mix.\n- Calculate it as: (estimated clients per tier × tier price) ÷ total estimated clients.\n- Do NOT invent an ARPU figure that exceeds the highest pricing tier stated in the Strategy Context.\n\n### Format rules\n- Do NOT use currency symbols anywhere in the JSON block — plain integers or decimals only.\n- monthly_growth_rate in the JSON MUST be a percentage number (e.g. 15 for 15%, NOT 0.15).\n- NEVER repeat a sentence, phrase, or paragraph already written earlier in your response.\n- Write at least 400 words in the narrative.\n- Use formal financial language throughout.\n- Structure the narrative using these headings: ${headings}\n\n## OUTPUT FORMAT\nReturn your response using EXACTLY this structure. Nothing before. Nothing after.\n\n=== SECTION_TEXT ===\n[Write the full Financial Plan narrative here, using the headings above]\n\n---CHART_DATA_START---\n{\n  \"revenue\": [YEAR1_NUMBER, YEAR2_NUMBER, YEAR3_NUMBER],\n  \"costs\": [YEAR1_COSTS, YEAR2_COSTS, YEAR3_COSTS],\n  \"profit\": [YEAR1_PROFIT, YEAR2_PROFIT, YEAR3_PROFIT],\n  \"breakeven_month\": MONTH_NUMBER,\n  \"arpu\": MONTHLY_REVENUE_PER_USER,\n  \"monthly_growth_rate\": PERCENTAGE_AS_NUMBER,\n  \"cost_breakdown_y1\": {\n    \"development\": NUMBER,\n    \"marketing\": NUMBER,\n    \"operations\": NUMBER\n  },\n  \"cost_breakdown_y2\": {\n    \"development\": NUMBER,\n    \"marketing\": NUMBER,\n    \"operations\": NUMBER\n  },\n  \"cost_breakdown_y3\": {\n    \"development\": NUMBER,\n    \"marketing\": NUMBER,\n    \"operations\": NUMBER\n  }\n}\n---CHART_DATA_END---\n\n=== MEMORY_SUMMARY ===\nStartup Costs: [value or derived estimate]\nMonthly Burn: [value or derived estimate]\nBreakeven: [Month NUMBER or derived estimate]\nRevenue Y1: [EXACT value from input or derived]\nRevenue Y2: [EXACT value from input or derived]\nRevenue Y3: [EXACT value from input or derived]\nCosts Y1: [EXACT value used in JSON — must be ≥ Monthly Burn × 12]\nCosts Y2: [EXACT value used in JSON]\nCosts Y3: [EXACT value used in JSON]\nProfit Y1: [revenue_y1 - costs_y1]\nProfit Y2: [revenue_y2 - costs_y2]\nProfit Y3: [revenue_y3 - costs_y3]\nFunding: [value or \"Not provided\"]\nCost Structure: [capex-heavy / opex-heavy / balanced — inferred from business model in Company Context]\nProfitability Status: [profitable from YX / all-loss scenario — adjusted scenario provided]\nPricing: [exact pricing figures from Strategy Context, or \"Not provided\"]\n`;\n\nreturn [{\n    json: {\n        prompt,\n        section_id: sectionId,\n        business_plan_id: businessPlanId,\n        section_name: 'financial_plan',\n        language,\n        input_json: input,\n    }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -912,
-        112
+        -2144,
+        400
       ],
-      "id": "07ef5bb2-1158-43b8-a368-c87e6e9ff943",
+      "id": "3df9a114-f22a-4a86-aca3-199128ac1882",
       "name": "Build Prompt"
     },
     {
@@ -298,10 +298,10 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -688,
-        112
+        -1920,
+        400
       ],
-      "id": "02f052de-e3bf-4e79-bc06-1366545472d5",
+      "id": "f17bf07e-cc36-4a37-ab18-fd2bd2291ab4",
       "name": "AI Agent"
     },
     {
@@ -349,29 +349,29 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.5,
       "position": [
-        720,
-        -96
+        -512,
+        192
       ],
-      "id": "e3e57cbf-a0ce-4376-9db8-4d765a097b20",
+      "id": "ffc3fd35-47b9-4732-83ab-fbe72da2fe8a",
       "name": "Update rows in a table",
       "credentials": {
         "mySql": {
-          "id": "OYe5cyJ7gIDEQOsQ",
-          "name": "Ventiqo MySQL"
+          "id": "YbyXFsvQ7tbVBtF1",
+          "name": "MySQL account"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "const raw = $('AI Agent').item.json.output || '';\n\n// Extract chart data\nconst chartDataMatch = raw.match(/---CHART_DATA_START---([\\s\\S]*?)---CHART_DATA_END---/);\n\nlet chartData = null;\nlet narrativeText = raw;\n\nif (chartDataMatch) {\n    try {\n        // Fix French number formatting (20 000 → 20000) and math expressions\n        const rawJson = chartDataMatch[1].trim()\n            .replace(/(\\d)\\s+(\\d)/g, '$1$2')\n            .replace(/(\\d+(?:\\+\\d+)+)/g, (match) => eval(match));\n        chartData = JSON.parse(rawJson);\n        narrativeText = raw\n            .replace(/---CHART_DATA_START---[\\s\\S]*?---CHART_DATA_END---/, '')\n            .replace(/###\\s*PART\\s*[12]\\s*[—-]\\s*[\\w\\s]+/gi, '')\n            .trim();\n    } catch (e) {\n        chartData = null;\n        console.log('chart parse error:', e.message);\n    }\n}\n\n// Match MEMORY_SUMMARY with any delimiter or even no delimiter\nlet memMatch = narrativeText.match(/(?:===|---|\\*\\*|)\\s*MEMORY_SUMMARY\\s*(?:===|---|\\*\\*|)[^\\n]*\\n([\\s\\S]*?)$/i);\nconst memory_summary = memMatch ? memMatch[1].trim() : '';\n\n// Remove everything from MEMORY_SUMMARY onwards\nlet cleanNarrative = narrativeText.replace(/(?:===|---|\\*\\*|)\\s*MEMORY_SUMMARY\\s*[\\s\\S]*$/i, '').trim();\n\n// Strip any stray === headings === from narrative\ncleanNarrative = cleanNarrative.replace(/===\\s*[^=]*?\\s*===/g, '').trim();\n\n// Strip any stray === headings === from narrative\ncleanNarrative = cleanNarrative.replace(/===\\s*[^=]*?\\s*===/g, '').trim();\n\n// Token estimation\nconst promptText    = $('Build Prompt').item.json.prompt || '';\nconst tokens_input  = Math.round(promptText.length / 4);\nconst tokens_output = Math.round(raw.length / 4);\nconst tokens_total  = tokens_input + tokens_output;\n\nconst buildData = $('Build Prompt').item.json;\nreturn [{\n    json: {\n        ...buildData,\n        output: cleanNarrative,\n        chart_data: chartData ? JSON.stringify(chartData) : null,\n        memory_summary,\n        tokens_input,\n        tokens_output,\n        tokens_total,\n    }\n}];"
+        "jsCode": "const raw = $('AI Agent').item.json.output || '';\n\n// ── Extract chart data block ──\nconst chartDataMatch = raw.match(/---CHART_DATA_START---([\\s\\S]*?)---CHART_DATA_END---/);\nlet chartData = null;\nlet narrativeText = raw;\n\nif (chartDataMatch) {\n    try {\n        const rawJson = chartDataMatch[1].trim()\n            .replace(/(\\d)\\s+(\\d)/g, '$1$2')\n            .replace(/(\\d+(?:\\+\\d+)+)/g, (match) => eval(match));\n\n        chartData = JSON.parse(rawJson);\n\n        const inputJson = $('Build Prompt').item.json.input_json || {};\n\n        // ── FIX 1: Auto-correct profit (profit must always = revenue - costs) ──\n        if (chartData.revenue && chartData.costs && chartData.profit) {\n            chartData.profit = chartData.revenue.map((r, i) => {\n                const correct = Math.round(r - (chartData.costs[i] || 0));\n                if (chartData.profit[i] !== correct) {\n                    console.log(`Profit Y${i + 1} corrected: ${chartData.profit[i]} → ${correct}`);\n                }\n                return correct;\n            });\n        }\n\n        // ── FIX 2: Verify AND auto-correct cost breakdowns to match total costs ──\n        ['y1', 'y2', 'y3'].forEach((yr, i) => {\n            const bd = chartData[`cost_breakdown_${yr}`];\n            const totalCost = chartData.costs?.[i];\n\n            if (bd && totalCost !== undefined) {\n                const sum = (bd.development || 0) +\n                            (bd.marketing   || 0) +\n                            (bd.operations  || 0);\n                const delta = Math.round(totalCost - sum);\n\n                if (Math.abs(delta) > 1) {\n                    const largest = Object.entries(bd).reduce(\n                        (a, b) => (b[1] > a[1] ? b : a)\n                    );\n                    bd[largest[0]] = Math.round(bd[largest[0]] + delta);\n                    console.log(\n                        `Cost breakdown Y${i + 1} corrected: ` +\n                        `sum was ${sum}, total is ${totalCost}, ` +\n                        `added ${delta} to ${largest[0]} → now ${bd[largest[0]]}`\n                    );\n                }\n            }\n        });\n\n        // ── FIX 3: Enforce burn rate floor on Y1 costs ──\n        const monthlyBurn = parseFloat(String(inputJson.monthly_burn).replace(/[^0-9.]/g, ''));\n        if (!isNaN(monthlyBurn) && chartData.costs?.[0] !== undefined) {\n            const burnFloor = Math.round(monthlyBurn * 12);\n            if (chartData.costs[0] < burnFloor) {\n                console.log(\n                    `WARNING: Y1 costs (${chartData.costs[0]}) are below the burn rate floor ` +\n                    `($${monthlyBurn}/month × 12 = $${burnFloor}). ` +\n                    `This is mathematically impossible — flagging as burn_rate_flag.`\n                );\n            }\n        }\n\n        // ── FIX 4: Restore user-provided revenue if model changed it ──\n        const userRevenues = [\n            parseFloat(String(inputJson.revenue_y1).replace(/[^0-9.]/g, '')),\n            parseFloat(String(inputJson.revenue_y2).replace(/[^0-9.]/g, '')),\n            parseFloat(String(inputJson.revenue_y3).replace(/[^0-9.]/g, '')),\n        ];\n        chartData.revenue.forEach((r, i) => {\n            if (!isNaN(userRevenues[i]) && Math.abs(r - userRevenues[i]) > 1) {\n                console.log(\n                    `Revenue Y${i + 1} restored: model output ${r}, user input was ${userRevenues[i]}`\n                );\n                chartData.revenue[i] = userRevenues[i];\n                chartData.profit[i] = Math.round(userRevenues[i] - (chartData.costs[i] || 0));\n            }\n        });\n\n        // ── FIX 5: Auto-correct decimal growth rate (0.15 → 15) ──\n        if (chartData.monthly_growth_rate !== undefined && chartData.monthly_growth_rate < 1) {\n            const corrected = Math.round(chartData.monthly_growth_rate * 100 * 10) / 10;\n            console.log(`Growth rate corrected: ${chartData.monthly_growth_rate} → ${corrected}%`);\n            chartData.monthly_growth_rate = corrected;\n        }\n\n        // ── FIX 6: ARPU sanity check ──\n        if (chartData.arpu && chartData.arpu > 2000) {\n            console.log(\n                `WARNING: ARPU of ${chartData.arpu} exceeds $2,000/month. ` +\n                `Verify against pricing tiers in Strategy context.`\n            );\n        }\n\n        // ── FIX 7: All-loss flag ──\n        if (chartData.profit && chartData.profit.every(p => p < 0)) {\n            console.log('WARNING: All three years show a loss. Check narrative for Adjusted Scenario.');\n        }\n\n        narrativeText = raw\n            .replace(/---CHART_DATA_START---[\\s\\S]*?---CHART_DATA_END---/, '')\n            .replace(/###\\s*PART\\s*[12]\\s*[—-]\\s*[\\w\\s]+/gi, '')\n            .trim();\n\n    } catch (e) {\n        chartData = null;\n        console.log('Chart parse error:', e.message);\n    }\n}\n\n// ── Extract MEMORY_SUMMARY ──\nlet memMatch = narrativeText.match(\n    /(?:===|---|\\*\\*|)\\s*MEMORY_SUMMARY\\s*(?:===|---|\\*\\*|)[^\\n]*\\n([\\s\\S]*?)$/i\n);\nconst memory_summary = memMatch ? memMatch[1].trim() : '';\n\n// ── Clean narrative ──\nlet cleanNarrative = narrativeText\n    .replace(/(?:===|---|\\*\\*|)\\s*MEMORY_SUMMARY\\s*[\\s\\S]*$/i, '')\n    .trim();\ncleanNarrative = cleanNarrative.replace(/===\\s*[^=]*?\\s*===/g, '').trim();\ncleanNarrative = cleanNarrative.replace(/===\\s*[^=]*?\\s*===/g, '').trim();\n\n// ── Parse MEMORY_SUMMARY into structured key-value object ──\nconst memoryObject = {};\nif (memory_summary) {\n    memory_summary.split('\\n').forEach(line => {\n        const colonIdx = line.indexOf(':');\n        if (colonIdx !== -1) {\n            const key = line.slice(0, colonIdx).trim()\n                .toLowerCase()\n                .replace(/\\s+/g, '_');\n            const value = line.slice(colonIdx + 1).trim();\n            if (key && value) memoryObject[key] = value;\n        }\n    });\n}\n\n// ── Token estimation ──\nconst promptText    = $('Build Prompt').item.json.prompt || '';\nconst tokens_input  = Math.round(promptText.length / 4);\nconst tokens_output = Math.round(raw.length / 4);\nconst tokens_total  = tokens_input + tokens_output;\n\nconst buildData = $('Build Prompt').item.json;\nconst inputJson = $('Build Prompt').item.json.input_json || {};\nconst monthlyBurnFinal = parseFloat(String(inputJson.monthly_burn).replace(/[^0-9.]/g, ''));\nconst burnFloorFinal   = !isNaN(monthlyBurnFinal) ? Math.round(monthlyBurnFinal * 12) : null;\n\nreturn [{\n    json: {\n        ...buildData,\n        output: cleanNarrative,\n        chart_data: chartData ? JSON.stringify(chartData) : null,\n        memory_summary,\n        memory_object: memoryObject,\n        all_loss_flag:    chartData?.profit?.every(p => p < 0) ?? false,\n        burn_rate_flag:   burnFloorFinal !== null && chartData?.costs?.[0] !== undefined\n                            ? chartData.costs[0] < burnFloorFinal\n                            : false,\n        tokens_input,\n        tokens_output,\n        tokens_total,\n    }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        480,
-        -96
+        -752,
+        192
       ],
-      "id": "f0608e93-c72f-4b68-9107-632d334451c0",
+      "id": "d9f5c334-40e7-435d-87b0-383ca7fe8108",
       "name": "Parse Chart Data"
     }
   ],
@@ -552,14 +552,14 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "8e0d90c5-64a1-4aca-843b-e62f4a6d170b",
+  "versionId": "5fe604ed-c869-4ad5-87c7-37e257c7ccfc",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "6a569b2b06bb36935715a193e7d6d9eccf4c8415c2531fd81379973f9771ddd1"
+    "instanceId": "9f1a720162674d642a06a18b9169c79fad98b1cd35c60e5162fc8a927fece21d"
   },
-  "id": "KiN9IKNH194Fl0a8",
+  "nodeGroups": [],
+  "id": "LzR9mji3zDOk4vPj",
   "tags": []
 }
